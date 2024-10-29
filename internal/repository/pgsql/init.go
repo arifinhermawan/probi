@@ -1,14 +1,21 @@
 package pgsql
 
-type pgsqlProvider interface {
+import (
+	"context"
+
+	"github.com/arifinhermawan/probi/internal/repository/pgsql/user"
+)
+
+type userProvider interface {
+	CreateUserInDB(ctx context.Context, req user.CreateUserReq) (int64, error)
 }
 
 type DBRepo struct {
-	db pgsqlProvider
+	user userProvider
 }
 
-func NewDBRepository(db pgsqlProvider) *DBRepo {
+func NewDBRepository(user userProvider) *DBRepo {
 	return &DBRepo{
-		db: db,
+		user: user,
 	}
 }

@@ -14,7 +14,7 @@ var (
 	errInitRedisConn = errors.New("failed to init redis connection")
 )
 
-func InitRedisConn(cfg *configuration.RedisConfig) (*redis.Client, error) {
+func InitRedisConn(cfg configuration.RedisConfig) (*redis.Client, error) {
 	ctx := context.DefaultContext()
 
 	client := redis.NewClient(&redis.Options{
