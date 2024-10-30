@@ -13,6 +13,7 @@ type libProvider interface {
 
 type psqlProvider interface {
 	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+	GetContext(ctx context.Context, dest interface{}, query string, args ...interface{}) error
 	Rebind(query string) string
 }
 

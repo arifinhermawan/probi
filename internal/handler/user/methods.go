@@ -17,7 +17,7 @@ func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	var req createUserReq
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		log.Error(ctx, nil, err, "[CreateUserHandler] json.NewDecoder(r.Body).Decode() got error")
+		log.Error(ctx, nil, err, "[CreateUserHandler] json.NewDecoder().Decode() got error")
 		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to create user", err)
 		return
 	}

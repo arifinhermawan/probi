@@ -16,6 +16,7 @@ func HandleRequest(handlers *server.Handlers) {
 	handlePatchRequest(handlers, router)
 	handlePostRequest(handlers, router)
 
+	log.Println("SERVING AT PORT :8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
@@ -41,5 +42,9 @@ func handlePatchRequest(handlers *server.Handlers, router *mux.Router) {
 }
 
 func handlePostRequest(handlers *server.Handlers, router *mux.Router) {
+	// User endpoints
 	router.HandleFunc("/user", handlers.User.CreateUserHandler).Methods("POST")
+
+	// Auth endpoints
+	router.HandleFunc("/login", handlers.Auth.LogInHandler).Methods("POST")
 }

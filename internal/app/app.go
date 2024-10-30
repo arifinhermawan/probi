@@ -9,6 +9,7 @@ import (
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
 	"github.com/arifinhermawan/probi/internal/lib/context"
 	"github.com/arifinhermawan/probi/internal/lib/time"
+	"github.com/arifinhermawan/probi/internal/repository/redis"
 )
 
 func NewApplication() {
@@ -28,7 +29,7 @@ func NewApplication() {
 	}
 
 	// init redis connection
-	_, err = utils.InitRedisConn(lib.GetConfig().Redis)
+	redisClient, err := utils.InitRedisConn(lib.GetConfig().Redis)
 	if err != nil {
 		log.Fatal(ctx, nil, err, "[NewApplication] utils.InitRedisConn() got error")
 		return
@@ -37,9 +38,10 @@ func NewApplication() {
 	// init app stack
 	// repo
 	psql := server.NewPSQL(lib, db)
+	redisRepo := redis.NewRedisRepository(redisClient)
 
 	// service
-	svc := server.NewService(lib, psql)
+	svc := server.NewService(lib, psql, redisRepo)
 
 	// usecase
 	uc := server.NewUseCases(svc)

@@ -8,8 +8,6 @@ import (
 )
 
 func (uc *UseCase) CreateUser(ctx context.Context, req CreateUserReq) error {
-	// find user by email
-
 	err := uc.user.CreateUser(ctx, user.CreateUserReq{
 		Email:       req.Email,
 		Username:    req.Username,

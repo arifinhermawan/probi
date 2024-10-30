@@ -1,17 +1,30 @@
 package authentication
 
-import "github.com/arifinhermawan/probi/internal/lib/configuration"
+import (
+	"context"
+	"time"
+
+	"github.com/arifinhermawan/probi/internal/lib/configuration"
+)
 
 type libProvider interface {
 	GetConfig() *configuration.AppConfig
+	GetTimeGMT7() time.Time
+}
+
+type redisProvider interface {
+	Get(ctx context.Context, key string) (string, error)
+	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
 }
 
 type Service struct {
-	lib libProvider
+	lib   libProvider
+	redis redisProvider
 }
 
-func NewService(lib libProvider) *Service {
+func NewService(lib libProvider, redis redisProvider) *Service {
 	return &Service{
-		lib: lib,
+		lib:   lib,
+		redis: redis,
 	}
 }

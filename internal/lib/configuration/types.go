@@ -8,6 +8,7 @@ type AppConfig struct {
 	Redis    RedisConfig    `json:"redis"`
 
 	// non-secret config
+	Authentication AuthConfig `yaml:"authentication"`
 }
 
 /*
@@ -26,6 +27,7 @@ type DatabaseConfig struct {
 
 type HashKeyConfig struct {
 	Password string `json:"password"`
+	JWT      string `json:"jwt"`
 }
 
 type NewRelicConfig struct {
@@ -41,3 +43,7 @@ type RedisConfig struct {
 /**
 // NON-SECRET CONFIGS
 */
+
+type AuthConfig struct {
+	TTLInSecond int `yaml:"ttl_in_second"`
+}

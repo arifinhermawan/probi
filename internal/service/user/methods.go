@@ -29,3 +29,29 @@ func (svc *Service) CreateUser(ctx context.Context, req CreateUserReq) error {
 
 	return nil
 }
+
+func (svc *Service) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	user, err := svc.db.GetUserByEmailFromDB(ctx, email)
+	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"email": email,
+		}, err, "[GetUserByEmail] svc.db.GetUserByEmailFromDB() got error")
+
+		return User{}, err
+	}
+
+	return User(user), nil
+}
+
+func (svc *Service) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	user, err := svc.db.GetUserByUsernameFromDB(ctx, username)
+	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"username": username,
+		}, err, "[GetUserByEmail] svc.db.GetUserByUsernameFromDB() got error")
+
+		return User{}, err
+	}
+
+	return User(user), nil
+}

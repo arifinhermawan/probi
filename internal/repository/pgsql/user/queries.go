@@ -12,4 +12,32 @@ var (
 			:updated_at
 		)
 	`
+
+	queryGetUserByEmailFromDB = `
+		SELECT
+			id,
+			username,
+			display_name,
+			email,
+			"password",
+			status
+		FROM
+			"user"
+		WHERE
+			email = $1
+	`
+
+	queryGetUserByUsernameFromDB = `
+		SELECT
+			id,
+			username,
+			display_name,
+			email,
+			"password",
+			status
+		FROM
+			"user"
+		WHERE
+			username = $1
+	`
 )

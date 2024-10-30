@@ -1,4 +1,4 @@
-package user
+package authentication
 
 import (
 	"context"
@@ -13,7 +13,6 @@ type authServiceProvider interface {
 }
 
 type userServiceProvider interface {
-	CreateUser(ctx context.Context, req user.CreateUserReq) error
 	GetUserByEmail(ctx context.Context, email string) (user.User, error)
 	GetUserByUsername(ctx context.Context, username string) (user.User, error)
 }
