@@ -9,6 +9,7 @@ import (
 type authServiceProvider interface {
 	Authenticate(ctx context.Context, userID int64) (string, error)
 	GeneratePassword(password string) string
+	InvalidateJWT(ctx context.Context, userID int64) error
 	IsPasswordMatch(password string, encPass string) bool
 }
 

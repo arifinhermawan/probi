@@ -65,6 +65,10 @@ func (svc *Service) GeneratePassword(password string) string {
 	return hex.EncodeToString(hashedBytes)
 }
 
+func (svc *Service) InvalidateJWT(ctx context.Context, userID int64) error {
+	return svc.deleteJWTFromRedis(ctx, userID)
+}
+
 func (svc *Service) IsPasswordMatch(password string, encPass string) bool {
 	return svc.GeneratePassword(password) == encPass
 }

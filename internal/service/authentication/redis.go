@@ -13,6 +13,19 @@ const (
 	redisKeyJWT = "auth:jwt:%d"
 )
 
+func (svc *Service) deleteJWTFromRedis(ctx context.Context, userID int64) error {
+	key := buildRedisJWTKey(userID)
+	err := svc.redis.Del(ctx, key)
+	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"user_id": userID,
+		}, err, "[deleteJWTInRedis] svc.redis.Del() got error")
+		return err
+	}
+
+	return nil
+}
+
 func (svc *Service) getJWTFromRedis(ctx context.Context, userID int64) (string, error) {
 	key := buildRedisJWTKey(userID)
 

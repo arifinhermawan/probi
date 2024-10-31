@@ -32,6 +32,10 @@ func (uc *UseCase) LogIn(ctx context.Context, req LogInReq) (int64, string, erro
 	return user.ID, jwt, nil
 }
 
+func (uc *UseCase) LogOut(ctx context.Context, userID int64) error {
+	return uc.auth.InvalidateJWT(ctx, userID)
+}
+
 func (uc *UseCase) getUser(ctx context.Context, email string, username string) (User, error) {
 	var user User
 

@@ -6,6 +6,7 @@ import (
 	"github.com/arifinhermawan/probi/internal/app/server"
 	"github.com/arifinhermawan/probi/internal/app/utils"
 	"github.com/arifinhermawan/probi/internal/lib"
+	"github.com/arifinhermawan/probi/internal/lib/auth"
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
 	"github.com/arifinhermawan/probi/internal/lib/context"
 	"github.com/arifinhermawan/probi/internal/lib/time"
@@ -15,10 +16,15 @@ import (
 func NewApplication() {
 	ctx := context.DefaultContext()
 
+	cfg := configuration.New()
+	auth := auth.NewAuth(cfg)
+	time := time.New()
+
 	// initialize lib
 	lib := lib.New(
-		configuration.New(),
-		time.New(),
+		auth,
+		cfg,
+		time,
 	)
 
 	// init db connection
@@ -48,5 +54,5 @@ func NewApplication() {
 
 	// handler
 	handler := server.NewHandler(uc)
-	route.HandleRequest(handler)
+	route.HandleRequest(lib, handler)
 }

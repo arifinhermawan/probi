@@ -7,12 +7,11 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/probi/internal/handler"
-	"github.com/arifinhermawan/probi/internal/lib/context"
 	"github.com/arifinhermawan/probi/internal/usecase/user"
 )
 
 func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := context.DefaultContext()
+	ctx := r.Context()
 
 	var req createUserReq
 	err := json.NewDecoder(r.Body).Decode(&req)

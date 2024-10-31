@@ -1,26 +1,29 @@
 package utils
 
 import (
+	"context"
 	"log"
 	"net/http"
 
+	blog "github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/probi/internal/app/server"
+	"github.com/arifinhermawan/probi/internal/lib"
+	internalContext "github.com/arifinhermawan/probi/internal/lib/context"
 	"github.com/gorilla/mux"
 )
 
-func HandleRequest(handlers *server.Handlers) {
+func HandleRequest(lib *lib.Lib, handlers *server.Handlers) {
 	router := mux.NewRouter().StrictSlash(true)
-	router.Use(cors)
 
-	handleGetRequest(handlers, router)
-	handlePatchRequest(handlers, router)
-	handlePostRequest(handlers, router)
+	handleGetRequest(lib, handlers, router)
+	handlePatchRequest(lib, handlers, router)
+	handlePostRequest(lib, handlers, router)
 
 	log.Println("SERVING AT PORT :8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", routeMiddleware(router)))
 }
 
-func cors(next http.Handler) http.Handler {
+func routeMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, PATCH, POST, OPTIONS")
@@ -31,20 +34,25 @@ func cors(next http.Handler) http.Handler {
 			return
 		}
 
+		ctx := internalContext.DefaultContext()
+		ctx = context.WithValue(ctx, blog.ContextKey("url"), r.URL.Path)
+		r = r.WithContext(ctx)
+
 		next.ServeHTTP(w, r)
 	})
 }
 
-func handleGetRequest(handlers *server.Handlers, router *mux.Router) {
+func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
 }
 
-func handlePatchRequest(handlers *server.Handlers, router *mux.Router) {
+func handlePatchRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
 }
 
-func handlePostRequest(handlers *server.Handlers, router *mux.Router) {
+func handlePostRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
 	// User endpoints
 	router.HandleFunc("/user", handlers.User.CreateUserHandler).Methods("POST")
 
 	// Auth endpoints
-	router.HandleFunc("/login", handlers.Auth.LogInHandler).Methods("POST")
+	router.HandleFunc("/auth/login", handlers.Auth.LogInHandler).Methods("POST")
+	router.HandleFunc("/auth/logout", lib.AuthMiddleware(handlers.Auth.LogOutHandler)).Methods("POST")
 }

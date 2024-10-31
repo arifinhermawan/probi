@@ -1,10 +1,15 @@
 package lib
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
 )
+
+func (i *Lib) AuthMiddleware(endpointHandler func(writer http.ResponseWriter, request *http.Request)) http.HandlerFunc {
+	return i.auth.AuthMiddleware(endpointHandler)
+}
 
 func (i *Lib) GetConfig() *configuration.AppConfig {
 	return i.config.GetConfig()
