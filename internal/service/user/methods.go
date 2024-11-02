@@ -68,8 +68,6 @@ func (svc *Service) GetUserByID(ctx context.Context, userID int64) (User, error)
 		Username:    res.Username,
 		DisplayName: res.DisplayName,
 		Email:       res.Email,
-		Password:    res.Password,
-		Status:      res.Status,
 	}
 
 	go func() {
@@ -93,4 +91,58 @@ func (svc *Service) GetUserByUsername(ctx context.Context, username string) (Use
 	}
 
 	return User(user), nil
+}
+
+func (svc *Service) UpdateUserDetails(ctx context.Context, req UpdateUserDetailsReq) error {
+	metadata := map[string]interface{}{
+		"user_id": req.UserID,
+	}
+
+	var err error
+	tx, err := svc.db.BeginTX(ctx, nil)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateUserDetails] svc.db.BeginTx() got error")
+		return err
+	}
+
+	defer func() {
+		if err != nil {
+			errRollback := tx.Rollback()
+			if errRollback != nil {
+				log.Error(ctx, metadata, err, "[UpdateUserDetails] tx.Rollback() got error")
+			}
+		}
+	}()
+
+	err = svc.db.UpdateUserDetailsInDB(ctx, tx, user.UpdateUserDetailsReq{
+		UserID:      req.UserID,
+		Username:    req.Username,
+		DisplayName: req.DisplayName,
+		UpdatedAt:   svc.lib.GetTimeGMT7(),
+	})
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateUserDetails] svc.db.UpdateUserDetailsInDB() got error")
+		return err
+	}
+
+	details := User{
+		ID:          req.UserID,
+		Username:    req.Username,
+		Email:       req.Email,
+		DisplayName: req.DisplayName,
+	}
+
+	err = svc.setUserDetailToRedis(ctx, details)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateUserDetails] svc.setUserDetailToRedis() got error")
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateUserDetails] tx.Commit() got error")
+		return err
+	}
+
+	return nil
 }

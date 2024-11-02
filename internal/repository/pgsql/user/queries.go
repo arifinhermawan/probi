@@ -54,4 +54,15 @@ var (
 		WHERE
 			username = $1
 	`
+
+	queryUpdateUserInDB = `
+		UPDATE
+			"user"
+		SET
+			username = :username,
+			display_name = :display_name,
+			updated_at = :updated_at
+		WHERE
+			id = :id
+	`
 )

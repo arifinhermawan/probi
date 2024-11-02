@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
@@ -14,10 +15,12 @@ type libProvider interface {
 }
 
 type dbProvider interface {
+	BeginTX(ctx context.Context, options *sql.TxOptions) (*sql.Tx, error)
 	CreateUserInDB(ctx context.Context, req user.CreateUserReq) error
 	GetUserByEmailFromDB(ctx context.Context, email string) (user.User, error)
 	GetUserByIDFromDB(ctx context.Context, userID int64) (user.User, error)
 	GetUserByUsernameFromDB(ctx context.Context, username string) (user.User, error)
+	UpdateUserDetailsInDB(ctx context.Context, tx *sql.Tx, req user.UpdateUserDetailsReq) error
 }
 
 type redisProvider interface {

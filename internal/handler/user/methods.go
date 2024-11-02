@@ -8,9 +8,13 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/probi/internal/handler"
+	"github.com/arifinhermawan/probi/internal/lib/auth"
 	"github.com/arifinhermawan/probi/internal/lib/errors"
 	"github.com/arifinhermawan/probi/internal/usecase/user"
 	"github.com/gorilla/mux"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -75,4 +79,39 @@ func (h *Handler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	handler.SendJSONResponse(w, http.StatusOK, user, "success!", nil)
+}
+
+func (h *Handler) UpdateUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	var req updateUserDetailsReq
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateUserDetailsHandler] json.NewDecoder().Decode() got error")
+		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to update user", err)
+		return
+	}
+
+	caser := cases.Title(language.English)
+	err = req.validate()
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateUserDetailsHandler] req.validate() got error")
+		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to update user", err)
+		return
+	}
+
+	userID := ctx.Value(auth.ContextKeyUserID).(int64)
+	err = h.user.UpdateUserDetails(ctx, user.UpdateUserDetailsReq{
+		UserID:      userID,
+		Email:       strings.ToLower(req.Email),
+		DisplayName: caser.String(req.DisplayName),
+		Username:    req.Username,
+	})
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateUserDetailsHandler] h.user.UpdateUserDetails() got error")
+		handler.SendJSONResponse(w, http.StatusInternalServerError, nil, "failed to update user", err)
+		return
+	}
+
+	handler.SendJSONResponse(w, http.StatusNoContent, nil, "success!", nil)
 }

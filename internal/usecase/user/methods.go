@@ -46,3 +46,16 @@ func (uc *UseCase) GetUserDetails(ctx context.Context, userID int64) (User, erro
 		Username:    res.Username,
 	}, nil
 }
+
+func (uc *UseCase) UpdateUserDetails(ctx context.Context, req UpdateUserDetailsReq) error {
+	err := uc.user.UpdateUserDetails(ctx, user.UpdateUserDetailsReq(req))
+	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"user_id": req.UserID,
+		}, err, "[UpdateUserDetails] uc.user.UpdateUserDetails() got error")
+
+		return err
+	}
+
+	return nil
+}

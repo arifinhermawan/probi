@@ -16,7 +16,7 @@ func HandleRequest(lib *lib.Lib, handlers *server.Handlers) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	handleGetRequest(lib, handlers, router)
-	handlePatchRequest(lib, handlers, router)
+	handlePutRequest(lib, handlers, router)
 	handlePostRequest(lib, handlers, router)
 
 	log.Println("SERVING AT PORT :8080")
@@ -46,7 +46,8 @@ func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Route
 	router.HandleFunc("/user/{user_id}", lib.AuthMiddleware(handlers.User.GetUserDetailsHandler)).Methods("GET")
 }
 
-func handlePatchRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
+func handlePutRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
+	router.HandleFunc("/user", lib.AuthMiddleware(handlers.User.UpdateUserDetailsHandler)).Methods("PUT")
 }
 
 func handlePostRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {

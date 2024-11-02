@@ -84,3 +84,22 @@ func (r *Repository) GetUserByUsernameFromDB(ctx context.Context, username strin
 
 	return user, nil
 }
+
+func (r *Repository) UpdateUserDetailsInDB(ctx context.Context, tx *sql.Tx, req UpdateUserDetailsReq) error {
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	defer cancel()
+
+	namedQuery, args, err := sqlx.Named(queryUpdateUserInDB, req)
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateUserDetailsInDB] sqlx.Named() got error")
+		return err
+	}
+
+	_, err = tx.ExecContext(ctxTimeout, r.db.Rebind(namedQuery), args...)
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateUserDetailsInDB] tx.ExecContext() got error")
+		return err
+	}
+
+	return nil
+}

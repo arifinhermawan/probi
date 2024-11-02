@@ -1,3 +1,3 @@
 ttl:
-  jwt: 50400
+  jwt: 86400
   user_detail: 900

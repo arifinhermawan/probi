@@ -17,6 +17,7 @@ type userServiceProvider interface {
 	GetUserByEmail(ctx context.Context, email string) (user.User, error)
 	GetUserByID(ctx context.Context, userID int64) (user.User, error)
 	GetUserByUsername(ctx context.Context, username string) (user.User, error)
+	UpdateUserDetails(ctx context.Context, req user.UpdateUserDetailsReq) error
 }
 
 type UseCase struct {

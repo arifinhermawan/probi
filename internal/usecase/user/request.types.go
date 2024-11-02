@@ -6,3 +6,10 @@ type CreateUserReq struct {
 	Email       string
 	Password    string
 }
+
+type UpdateUserDetailsReq struct {
+	UserID      int64
+	Username    string
+	DisplayName string
+	Email       string
+}

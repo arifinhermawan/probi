@@ -9,6 +9,7 @@ import (
 type userUseCaseProvider interface {
 	CreateUser(ctx context.Context, req user.CreateUserReq) error
 	GetUserDetails(ctx context.Context, userID int64) (user.User, error)
+	UpdateUserDetails(ctx context.Context, req user.UpdateUserDetailsReq) error
 }
 
 type Handler struct {
