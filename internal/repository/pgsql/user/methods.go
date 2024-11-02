@@ -51,6 +51,23 @@ func (r *Repository) GetUserByEmailFromDB(ctx context.Context, email string) (Us
 	return user, nil
 }
 
+func (r *Repository) GetUserByIDFromDB(ctx context.Context, userID int64) (User, error) {
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	defer cancel()
+
+	var user User
+	err := r.db.GetContext(ctxTimeout, &user, queryGetUserByIDFromDB, userID)
+	if err != nil && err != sql.ErrNoRows {
+		log.Error(ctx, map[string]interface{}{
+			"user_id": userID,
+		}, err, "[GetUserByIDFromDB] r.db.GetContext() got error")
+
+		return User{}, err
+	}
+
+	return user, nil
+}
+
 func (r *Repository) GetUserByUsernameFromDB(ctx context.Context, username string) (User, error) {
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
 	defer cancel()

@@ -3,11 +3,14 @@ package user
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/probi/internal/handler"
+	"github.com/arifinhermawan/probi/internal/lib/errors"
 	"github.com/arifinhermawan/probi/internal/usecase/user"
+	"github.com/gorilla/mux"
 )
 
 func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,4 +42,37 @@ func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	handler.SendJSONResponse(w, http.StatusCreated, nil, "success!", nil)
+}
+
+func (h *Handler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	vars := mux.Vars(r)
+	userIDstr := vars["user_id"]
+	userID, err := strconv.ParseInt(userIDstr, 10, 64)
+	if err != nil {
+		log.Error(ctx, nil, err, "[GetUserDetailsHandler] strconv.ParseInt() got error")
+		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to get user", err)
+		return
+	}
+	res, err := h.user.GetUserDetails(ctx, userID)
+	if err != nil {
+		log.Error(ctx, nil, err, "[GetUserDetailsHandler] h.user.GetUserDetails() got error")
+		if err == errors.ErrUserNotFound {
+			handler.SendJSONResponse(w, http.StatusBadRequest, nil, "user not exists", err)
+			return
+		}
+
+		handler.SendJSONResponse(w, http.StatusInternalServerError, nil, "failed to get user", err)
+		return
+	}
+
+	user := User{
+		ID:          res.ID,
+		Username:    res.Username,
+		Email:       res.Email,
+		DisplayName: res.DisplayName,
+	}
+
+	handler.SendJSONResponse(w, http.StatusOK, user, "success!", nil)
 }

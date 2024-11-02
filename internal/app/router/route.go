@@ -43,16 +43,17 @@ func routeMiddleware(next http.Handler) http.Handler {
 }
 
 func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
+	router.HandleFunc("/user/{user_id}", lib.AuthMiddleware(handlers.User.GetUserDetailsHandler)).Methods("GET")
 }
 
 func handlePatchRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
 }
 
 func handlePostRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
-	// User endpoints
-	router.HandleFunc("/user", handlers.User.CreateUserHandler).Methods("POST")
-
 	// Auth endpoints
 	router.HandleFunc("/auth/login", handlers.Auth.LogInHandler).Methods("POST")
 	router.HandleFunc("/auth/logout", lib.AuthMiddleware(handlers.Auth.LogOutHandler)).Methods("POST")
+
+	// User endpoints
+	router.HandleFunc("/user", handlers.User.CreateUserHandler).Methods("POST")
 }

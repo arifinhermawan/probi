@@ -43,6 +43,45 @@ func (svc *Service) GetUserByEmail(ctx context.Context, email string) (User, err
 	return User(user), nil
 }
 
+func (svc *Service) GetUserByID(ctx context.Context, userID int64) (User, error) {
+	metadata := map[string]interface{}{
+		"user_id": userID,
+	}
+
+	user, err := svc.getUserDetailFromRedis(ctx, userID)
+	if err != nil {
+		log.Warn(ctx, metadata, err, "[GetUserByID] svc.getUserDetailFromRedis() got error")
+	}
+
+	if user.ID != 0 {
+		return user, nil
+	}
+
+	res, err := svc.db.GetUserByIDFromDB(ctx, userID)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[GetUserByID] svc.db.GetUserByIDFromDB() got error")
+		return User{}, err
+	}
+
+	details := User{
+		ID:          res.ID,
+		Username:    res.Username,
+		DisplayName: res.DisplayName,
+		Email:       res.Email,
+		Password:    res.Password,
+		Status:      res.Status,
+	}
+
+	go func() {
+		err := svc.setUserDetailToRedis(ctx, details)
+		if err != nil {
+			log.Warn(ctx, metadata, err, "[GetUserByID] svc.setUserDetailToRedis() got error")
+		}
+	}()
+
+	return details, nil
+}
+
 func (svc *Service) GetUserByUsername(ctx context.Context, username string) (User, error) {
 	user, err := svc.db.GetUserByUsernameFromDB(ctx, username)
 	if err != nil {

@@ -27,6 +27,20 @@ var (
 			email = $1
 	`
 
+	queryGetUserByIDFromDB = `
+		SELECT
+			id,
+			username,
+			display_name,
+			email,
+			"password",
+			status
+		FROM
+			"user"
+		WHERE
+			id = $1
+	`
+
 	queryGetUserByUsernameFromDB = `
 		SELECT
 			id,

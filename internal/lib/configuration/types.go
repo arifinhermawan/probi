@@ -8,7 +8,7 @@ type AppConfig struct {
 	Redis    RedisConfig    `json:"redis"`
 
 	// non-secret config
-	Authentication AuthConfig `yaml:"authentication"`
+	TTL TTLConfig `yaml:"ttl"`
 }
 
 /*
@@ -44,6 +44,7 @@ type RedisConfig struct {
 // NON-SECRET CONFIGS
 */
 
-type AuthConfig struct {
-	TTLInSecond int `yaml:"ttl_in_second"`
+type TTLConfig struct {
+	JWT        int `yaml:"jwt"`
+	UserDetail int `yaml:"user_detail"`
 }

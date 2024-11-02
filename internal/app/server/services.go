@@ -15,6 +15,6 @@ type Services struct {
 func NewService(lib *lib.Lib, db *PSQL, redis *redis.RedisRepo) *Services {
 	return &Services{
 		Auth: authentication.NewService(lib, redis),
-		User: user.NewService(lib, db.User),
+		User: user.NewService(lib, db.User, redis),
 	}
 }

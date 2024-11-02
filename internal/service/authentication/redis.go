@@ -55,7 +55,7 @@ func (svc *Service) getJWTFromRedis(ctx context.Context, userID int64) (string, 
 
 func (svc *Service) setJWTToRedis(ctx context.Context, userID int64, jwt string) error {
 	key := buildRedisJWTKey(userID)
-	ttl := time.Second * time.Duration(svc.lib.GetConfig().Authentication.TTLInSecond)
+	ttl := time.Second * time.Duration(svc.lib.GetConfig().TTL.JWT)
 
 	err := svc.redis.Set(ctx, key, jwt, ttl)
 	if err != nil {
