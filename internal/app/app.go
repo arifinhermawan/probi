@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/arifinhermawan/blib/log"
-	route "github.com/arifinhermawan/probi/internal/app/router"
+	"github.com/arifinhermawan/probi/internal/app/router"
 	"github.com/arifinhermawan/probi/internal/app/server"
 	"github.com/arifinhermawan/probi/internal/app/utils"
 	"github.com/arifinhermawan/probi/internal/lib"
@@ -11,11 +11,11 @@ import (
 	"github.com/arifinhermawan/probi/internal/lib/context"
 	"github.com/arifinhermawan/probi/internal/lib/time"
 	"github.com/arifinhermawan/probi/internal/repository/redis"
+	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
-func NewApplication() {
+func NewApplication(app *newrelic.Application) {
 	ctx := context.DefaultContext()
-
 	cfg := configuration.New()
 	auth := auth.NewAuth(cfg)
 	time := time.New()
@@ -54,5 +54,5 @@ func NewApplication() {
 
 	// handler
 	handler := server.NewHandler(uc)
-	route.HandleRequest(lib, handler)
+	router.HandleRequest(app, lib, handler)
 }
