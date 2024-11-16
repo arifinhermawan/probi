@@ -24,7 +24,15 @@ func (svc *Service) calculateDueDate(req calculateDueDateReq) time.Time {
 }
 
 func getWeeklyDate(curr, target int) int {
+	if curr == 0 && target == 0 {
+		return 7
+	}
+
 	calc := target - curr
 	daysToAdd := int(math.Abs(float64(calc))) % 7
-	return 7 - daysToAdd
+	if calc < 0 {
+		return 7 - daysToAdd
+	}
+
+	return daysToAdd
 }

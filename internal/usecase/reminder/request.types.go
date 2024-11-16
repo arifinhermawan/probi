@@ -10,3 +10,11 @@ type CreateReminderReq struct {
 	StartDate time.Time
 	EndDate   time.Time
 }
+
+type UpdateReminderReq struct {
+	ID        int64
+	UserID    int64
+	Frequency string
+	Interval  int
+	EndDate   time.Time
+}

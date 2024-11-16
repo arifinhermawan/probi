@@ -97,3 +97,54 @@ func (h *Handler) GetUserActiveReminderHandler(w http.ResponseWriter, r *http.Re
 
 	handler.SendJSONResponse(w, http.StatusOK, reminders, handler.SuccessMessage, nil)
 }
+
+func (h *Handler) UpdateReminderHandler(w http.ResponseWriter, r *http.Request) {
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"UpdateReminderHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
+
+	var req updateReminderReq
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateReminderHandler] json.NewDecoder().Decode() got error")
+		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to update reminder", err)
+		return
+	}
+
+	err = validate(req)
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateReminderHandler] validate() got error")
+		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to update reminder", err)
+		return
+	}
+
+	endDate := time.Time{}
+	if req.EndDate != "" {
+		endDate, err = time.Parse(internalTime.DateFormat, req.EndDate)
+		if err != nil {
+			log.Error(ctx, nil, err, "[UpdateReminderHandler] time.Parse() got error")
+			handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to update reminder", err)
+			return
+		}
+	}
+
+	if req.Interval < 0 {
+		req.Interval = 0
+	}
+
+	userID := ctx.Value(auth.ContextKeyUserID).(int64)
+	err = h.reminder.UpdateReminder(ctx, reminder.UpdateReminderReq{
+		ID:        req.ID,
+		UserID:    userID,
+		Frequency: strings.ToUpper(req.Frequency),
+		Interval:  req.Interval,
+		EndDate:   endDate,
+	})
+	if err != nil {
+		log.Error(ctx, nil, err, "[UpdateReminderHandler] h.reminder.UpdateReminder() got error")
+		handler.SendJSONResponse(w, http.StatusInternalServerError, nil, "failed to update reminder", err)
+		return
+	}
+
+	handler.SendJSONResponse(w, http.StatusNoContent, nil, "success", nil)
+}

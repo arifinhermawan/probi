@@ -10,4 +10,15 @@ type CreateReminderReq struct {
 	StartDate time.Time `db:"start_date"`
 	EndDate   time.Time `db:"end_date"`
 	DueDate   time.Time `db:"due_date"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+}
+
+type UpdateReminderReq struct {
+	ID        int64     `db:"id"`
+	Frequency string    `db:"frequency"`
+	Interval  int       `db:"interval"`
+	EndDate   time.Time `db:"end_date"`
+	DueDate   time.Time `db:"due_date"`
+	UpdatedAt time.Time `db:"updated_at"`
 }

@@ -12,6 +12,13 @@ type createReminderReq struct {
 	EndDate   string `json:"end_date,omitempty"`
 }
 
+type updateReminderReq struct {
+	ID        int64  `json:"id" validate:"required"`
+	Frequency string `json:"frequency,omitempty"`
+	Interval  int    `json:"interval" validate:"required"`
+	EndDate   string `json:"end_date,omitempty"`
+}
+
 func validate(r interface{}) error {
 	validate := validator.New()
 	return validate.Struct(r)

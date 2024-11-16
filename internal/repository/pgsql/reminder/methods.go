@@ -24,20 +24,7 @@ func (r *Repository) CreateReminderInDB(ctx context.Context, req CreateReminderR
 		"interval":  req.Interval,
 	}
 
-	timeNow := r.lib.GetTimeGMT7()
-	param := map[string]interface{}{
-		"user_id":    req.UserID,
-		"title":      req.Title,
-		"frequency":  req.Frequency,
-		"interval":   req.Interval,
-		"start_date": req.StartDate,
-		"end_date":   req.EndDate,
-		"due_date":   req.DueDate,
-		"created_at": timeNow,
-		"updated_at": timeNow,
-	}
-
-	namedQuery, args, err := sqlx.Named(queryCreateReminderInDB, param)
+	namedQuery, args, err := sqlx.Named(queryCreateReminderInDB, req)
 	if err != nil {
 		log.Error(ctx, metadata, err, "[CreateReminderInDB] sqlx.Named() got error")
 		return err
@@ -70,4 +57,33 @@ func (r *Repository) GetActiveReminderByUserIDFromDB(ctx context.Context, userID
 	}
 
 	return reminders, nil
+}
+
+func (r *Repository) UpdateReminderInDB(ctx context.Context, req UpdateReminderReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"UpdateReminderInDB")
+	defer span.End()
+
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
+	defer cancel()
+
+	metadata := map[string]interface{}{
+		"id":        req.ID,
+		"frequency": req.Frequency,
+		"interval":  req.Interval,
+		"end_date":  req.EndDate,
+	}
+
+	namedQuery, args, err := sqlx.Named(queryUpdateReminderInDB, req)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateReminderInDB] sqlx.Named() got error")
+		return err
+	}
+
+	_, err = r.db.ExecContext(ctxTimeout, r.db.Rebind(namedQuery), args...)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateReminderInDB] r.db.ExecContext() got error")
+		return err
+	}
+
+	return nil
 }

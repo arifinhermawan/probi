@@ -31,6 +31,9 @@ func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Route
 }
 
 func handlePutRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
+	// Reminder endpoints
+	router.HandleFunc("/reminder", lib.AuthMiddleware(handlers.Reminder.UpdateReminderHandler)).Methods("PUT")
+
 	// User endpoints
 	router.HandleFunc("/user", lib.AuthMiddleware(handlers.User.UpdateUserDetailsHandler)).Methods("PUT")
 }

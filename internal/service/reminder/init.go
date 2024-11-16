@@ -17,6 +17,7 @@ type libProvider interface {
 type dbProvider interface {
 	CreateReminderInDB(ctx context.Context, req reminder.CreateReminderReq) error
 	GetActiveReminderByUserIDFromDB(ctx context.Context, userID int64) ([]reminder.Reminder, error)
+	UpdateReminderInDB(ctx context.Context, req reminder.UpdateReminderReq) error
 }
 
 type redisProvider interface {

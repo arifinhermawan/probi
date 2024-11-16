@@ -32,7 +32,7 @@ var (
 			id,
 			title,
 			frequency,
-			interval,
+			"interval",
 			due_date
 		FROM 
 			reminder
@@ -40,5 +40,18 @@ var (
 			user_id = $1
 		AND
 			deleted_at IS NULL
+	`
+
+	queryUpdateReminderInDB = `
+		UPDATE
+			reminder
+		SET
+			frequency = :frequency,
+			"interval" = :interval,
+			due_date = :due_date,
+			end_date = :end_date,
+			updated_at = :updated_at
+		WHERE
+			id = :id
 	`
 )

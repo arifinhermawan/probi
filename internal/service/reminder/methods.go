@@ -19,6 +19,7 @@ func (svc *Service) CreateReminder(ctx context.Context, req CreateReminderReq) e
 		endDate:   req.EndDate,
 	})
 
+	timeNow := svc.lib.GetTimeGMT7()
 	request := reminder.CreateReminderReq{
 		UserID:    req.UserID,
 		Title:     req.Title,
@@ -27,6 +28,8 @@ func (svc *Service) CreateReminder(ctx context.Context, req CreateReminderReq) e
 		StartDate: req.StartDate,
 		DueDate:   dueDate,
 		EndDate:   req.EndDate,
+		CreatedAt: timeNow,
+		UpdatedAt: timeNow,
 	}
 
 	metadata := map[string]interface{}{
@@ -86,4 +89,47 @@ func (svc *Service) GetUserActiveReminder(ctx context.Context, userID int64) ([]
 	}()
 
 	return reminders, nil
+}
+
+func (svc *Service) UpdateReminder(ctx context.Context, req UpdateReminderReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"UpdateReminder")
+	defer span.End()
+
+	timeNow := svc.lib.GetTimeGMT7()
+	dueDate := svc.calculateDueDate(calculateDueDateReq{
+		frequency: req.Frequency,
+		interval:  req.Interval,
+		startDate: timeNow,
+		endDate:   req.EndDate,
+	})
+
+	request := reminder.UpdateReminderReq{
+		ID:        req.ID,
+		Frequency: req.Frequency,
+		Interval:  req.Interval,
+		DueDate:   dueDate,
+		EndDate:   req.EndDate,
+		UpdatedAt: timeNow,
+	}
+
+	metadata := map[string]interface{}{
+		"id":        req.ID,
+		"frequency": req.Frequency,
+		"interval":  req.Interval,
+		"due_date":  dueDate,
+		"end_date":  req.EndDate,
+	}
+
+	err := svc.db.UpdateReminderInDB(ctx, request)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[UpdateReminder] svc.db.UpdateReminderInDB() got error")
+		return err
+	}
+
+	err = svc.deleteReminderListInRedis(ctx, req.UserID)
+	if err != nil {
+		log.Warn(ctx, metadata, err, "[UpdateReminder] svc.deleteReminderListInRedis() got error")
+	}
+
+	return nil
 }

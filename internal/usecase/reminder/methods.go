@@ -46,3 +46,22 @@ func (uc *UseCase) GetUserActiveReminder(ctx context.Context, userID int64) ([]R
 
 	return reminders, nil
 }
+
+func (uc *UseCase) UpdateReminder(ctx context.Context, req UpdateReminderReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"UpdateReminder")
+	defer span.End()
+
+	err := uc.reminder.UpdateReminder(ctx, reminder.UpdateReminderReq(req))
+	if err != nil {
+		log.Error(ctx, map[string]interface{}{
+			"id":        req.ID,
+			"frequency": req.Frequency,
+			"interval":  req.Interval,
+			"end_date":  req.EndDate,
+		}, err, "[UpdateReminder] uc.reminder.UpdateReminder() got error")
+
+		return err
+	}
+
+	return nil
+}
