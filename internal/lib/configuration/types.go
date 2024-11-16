@@ -8,7 +8,8 @@ type AppConfig struct {
 	Redis    RedisConfig    `json:"redis"`
 
 	// non-secret config
-	TTL TTLConfig `yaml:"ttl"`
+	Timeout TimeoutConfig `yaml:"timeout"`
+	TTL     TTLConfig     `yaml:"ttl"`
 }
 
 /*
@@ -16,13 +17,12 @@ type AppConfig struct {
 // SECRET CONFIGS
 */
 type DatabaseConfig struct {
-	Driver         string `json:"driver"`
-	Host           string `json:"host"`
-	DatabaseName   string `json:"database_name"`
-	Password       string `json:"password"`
-	Port           int    `json:"port"`
-	Username       string `json:"username"`
-	DefaultTimeout int    `json:"default_timeout"`
+	Driver       string `json:"driver"`
+	Host         string `json:"host"`
+	DatabaseName string `json:"database_name"`
+	Password     string `json:"password"`
+	Port         int    `json:"port"`
+	Username     string `json:"username"`
 }
 
 type HashKeyConfig struct {
@@ -44,7 +44,11 @@ type RedisConfig struct {
 // NON-SECRET CONFIGS
 */
 
+type TimeoutConfig struct {
+	FiveSeconds int `yaml:"five_seconds"`
+}
+
 type TTLConfig struct {
-	JWT        int `yaml:"jwt"`
-	UserDetail int `yaml:"user_detail"`
+	FifteenMinutes int `yaml:"fifteen_minutes"`
+	OneDay         int `yaml:"one_day"`
 }

@@ -14,7 +14,7 @@ func (r *Repository) CreateUserInDB(ctx context.Context, req CreateUserReq) erro
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"CreateUserInDB")
 	defer span.End()
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
 	defer cancel()
 
 	metadata := map[string]interface{}{
@@ -42,7 +42,7 @@ func (r *Repository) GetUserByEmailFromDB(ctx context.Context, email string) (Us
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetUserByEmailFromDB")
 	defer span.End()
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
 	defer cancel()
 
 	var user User
@@ -62,7 +62,7 @@ func (r *Repository) GetUserByIDFromDB(ctx context.Context, userID int64) (User,
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetUserByIDFromDB")
 	defer span.End()
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
 	defer cancel()
 
 	var user User
@@ -82,7 +82,7 @@ func (r *Repository) GetUserByUsernameFromDB(ctx context.Context, username strin
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetUserByUsernameFromDB")
 	defer span.End()
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
 	defer cancel()
 
 	var user User
@@ -102,7 +102,7 @@ func (r *Repository) UpdateUserDetailsInDB(ctx context.Context, tx *sql.Tx, req 
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"UpdateUserDetailsInDB")
 	defer span.End()
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
 	defer cancel()
 
 	namedQuery, args, err := sqlx.Named(queryUpdateUserInDB, req)

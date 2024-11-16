@@ -48,7 +48,7 @@ func (svc *Service) setUserDetailToRedis(ctx context.Context, details User) erro
 	defer span.End()
 
 	key := buildRedisUserDetailKey(details.ID)
-	ttl := time.Second * time.Duration(svc.lib.GetConfig().TTL.UserDetail)
+	ttl := time.Second * time.Duration(svc.lib.GetConfig().TTL.FifteenMinutes)
 
 	err := svc.redis.Set(ctx, key, details, ttl)
 	if err != nil {

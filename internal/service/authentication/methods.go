@@ -31,7 +31,7 @@ func (svc *Service) Authenticate(ctx context.Context, userID int64) (string, err
 	}
 
 	cfg := svc.lib.GetConfig()
-	ttl := cfg.TTL.JWT
+	ttl := cfg.TTL.OneDay
 	timeNow := svc.lib.GetTimeGMT7()
 	expiredAt := timeNow.Add(time.Second * time.Duration(ttl))
 
