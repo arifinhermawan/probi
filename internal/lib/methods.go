@@ -18,3 +18,7 @@ func (i *Lib) GetConfig() *configuration.AppConfig {
 func (i *Lib) GetTimeGMT7() time.Time {
 	return i.time.GetTimeGMT7()
 }
+
+func (i *Lib) ConvertToGMT7(input time.Time) time.Time {
+	return i.time.ConvertToGMT7(input)
+}

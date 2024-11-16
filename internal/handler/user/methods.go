@@ -31,9 +31,9 @@ func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = req.validate()
+	err = validate(req)
 	if err != nil {
-		log.Error(ctx, nil, err, "[CreateUserHandler] req.validate() got error")
+		log.Error(ctx, nil, err, "[CreateUserHandler] validate() got error")
 		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to create user", err)
 		return
 	}
@@ -100,9 +100,9 @@ func (h *Handler) UpdateUserDetailsHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	caser := cases.Title(language.English)
-	err = req.validate()
+	err = validate(req)
 	if err != nil {
-		log.Error(ctx, nil, err, "[UpdateUserDetailsHandler] req.validate() got error")
+		log.Error(ctx, nil, err, "[UpdateUserDetailsHandler] validate() got error")
 		handler.SendJSONResponse(w, http.StatusBadRequest, nil, "failed to update user", err)
 		return
 	}

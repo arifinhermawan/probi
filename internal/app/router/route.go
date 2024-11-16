@@ -1,6 +1,7 @@
 package router
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
-func HandleRequest(lib *lib.Lib, handlers *server.Handlers) {
+func HandleRequest(ctx context.Context, lib *lib.Lib, handlers *server.Handlers) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	handleGetRequest(lib, handlers, router)
@@ -18,7 +19,7 @@ func HandleRequest(lib *lib.Lib, handlers *server.Handlers) {
 	handlePostRequest(lib, handlers, router)
 
 	log.Println("SERVING AT PORT :8080")
-	log.Fatal(http.ListenAndServe(newrelic.WrapListen(":8080"), routeMiddleware(router)))
+	log.Fatal(http.ListenAndServe(newrelic.WrapListen(":8080"), routeMiddleware(ctx, router)))
 }
 
 func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
@@ -33,6 +34,9 @@ func handlePostRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Rout
 	// Auth endpoints
 	router.HandleFunc("/auth/login", handlers.Auth.LogInHandler).Methods("POST")
 	router.HandleFunc("/auth/logout", lib.AuthMiddleware(handlers.Auth.LogOutHandler)).Methods("POST")
+
+	// reminder endpoints
+	router.HandleFunc("/reminder", lib.AuthMiddleware(handlers.Reminder.CreateReminderHandler)).Methods("POST")
 
 	// User endpoints
 	router.HandleFunc("/user", handlers.User.CreateUserHandler).Methods("POST")

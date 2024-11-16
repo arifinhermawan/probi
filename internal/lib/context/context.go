@@ -11,7 +11,7 @@ func DefaultContext() context.Context {
 	ctx := context.Background()
 
 	hostname, _ := os.Hostname()
-	service := "PROBI"
+	service := "probi"
 
 	ctx = context.WithValue(ctx, log.ContextKey("host"), hostname)
 	ctx = context.WithValue(ctx, log.ContextKey("service"), service)

@@ -3,6 +3,9 @@ package time
 import "time"
 
 func (t *Time) GetTimeGMT7() time.Time {
-	location, _ := time.LoadLocation("Asia/Jakarta")
-	return time.Now().In(location)
+	return time.Now().In(LocationJakarta)
+}
+
+func (t *Time) ConvertToGMT7(input time.Time) time.Time {
+	return input.In(LocationJakarta)
 }

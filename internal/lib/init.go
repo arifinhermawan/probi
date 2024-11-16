@@ -15,6 +15,7 @@ type configProvider interface {
 }
 
 type timeProvider interface {
+	ConvertToGMT7(input time.Time) time.Time
 	GetTimeGMT7() time.Time
 }
 

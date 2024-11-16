@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 
 	"github.com/arifinhermawan/blib/log"
@@ -15,21 +16,24 @@ const (
 )
 
 func main() {
+	ctx := internalContext.DefaultContext()
+	ctx = context.WithValue(ctx, log.ContextKey("service_type"), "http")
+
 	nrApp, err := utils.InitNewRelicConn()
 	if err != nil {
-		log.Fatal(internalContext.DefaultContext(), nil, err, "Failed to init new relic")
+		log.Fatal(ctx, nil, err, "Failed to init new relic")
 	}
 
 	// clean up log file so it doesn't
 	// get bloated
-	cleanUp()
+	cleanUp(ctx)
 	tracer.InitTracer(nrApp)
 	log.Init(filePath)
-	app.NewApplication(nrApp)
+	app.NewApplication(ctx, nrApp)
 }
 
-func cleanUp() {
+func cleanUp(ctx context.Context) {
 	if err := os.Truncate(filePath, 0); err != nil {
-		log.Warn(internalContext.DefaultContext(), nil, nil, "Failed to open log file")
+		log.Warn(ctx, nil, nil, "Failed to open log file")
 	}
 }

@@ -5,10 +5,9 @@ import (
 	"net/http"
 
 	blog "github.com/arifinhermawan/blib/log"
-	internalContext "github.com/arifinhermawan/probi/internal/lib/context"
 )
 
-func routeMiddleware(next http.Handler) http.Handler {
+func routeMiddleware(ctx context.Context, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -20,8 +19,7 @@ func routeMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := internalContext.DefaultContext()
-		ctx = context.WithValue(ctx, blog.ContextKey("url"), r.URL.Path)
+		ctx := context.WithValue(ctx, blog.ContextKey("url"), r.URL.Path)
 		r = r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)

@@ -9,18 +9,13 @@ type createUserReq struct {
 	Password    string `json:"password" validate:"required"`
 }
 
-func (r *createUserReq) validate() error {
-	validate := validator.New()
-	return validate.Struct(r)
-}
-
 type updateUserDetailsReq struct {
 	Username    string `json:"username" validate:"required,min=3,max=30"`
 	DisplayName string `json:"display_name" validate:"required,min=3,max=50"`
 	Email       string `json:"email" validate:"required,email"`
 }
 
-func (r *updateUserDetailsReq) validate() error {
+func validate(r interface{}) error {
 	validate := validator.New()
 	return validate.Struct(r)
 }
