@@ -6,10 +6,14 @@ import (
 	"time"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/jmoiron/sqlx"
 )
 
 func (r *Repository) CreateUserInDB(ctx context.Context, req CreateUserReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"CreateUserInDB")
+	defer span.End()
+
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
 	defer cancel()
 
@@ -35,6 +39,9 @@ func (r *Repository) CreateUserInDB(ctx context.Context, req CreateUserReq) erro
 }
 
 func (r *Repository) GetUserByEmailFromDB(ctx context.Context, email string) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetUserByEmailFromDB")
+	defer span.End()
+
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
 	defer cancel()
 
@@ -52,6 +59,9 @@ func (r *Repository) GetUserByEmailFromDB(ctx context.Context, email string) (Us
 }
 
 func (r *Repository) GetUserByIDFromDB(ctx context.Context, userID int64) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetUserByIDFromDB")
+	defer span.End()
+
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
 	defer cancel()
 
@@ -69,6 +79,9 @@ func (r *Repository) GetUserByIDFromDB(ctx context.Context, userID int64) (User,
 }
 
 func (r *Repository) GetUserByUsernameFromDB(ctx context.Context, username string) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetUserByUsernameFromDB")
+	defer span.End()
+
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
 	defer cancel()
 
@@ -86,6 +99,9 @@ func (r *Repository) GetUserByUsernameFromDB(ctx context.Context, username strin
 }
 
 func (r *Repository) UpdateUserDetailsInDB(ctx context.Context, tx *sql.Tx, req UpdateUserDetailsReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"UpdateUserDetailsInDB")
+	defer span.End()
+
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Database.DefaultTimeout)*time.Second)
 	defer cancel()
 

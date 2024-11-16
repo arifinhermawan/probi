@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/arifinhermawan/probi/internal/handler"
 	"github.com/arifinhermawan/probi/internal/lib/auth"
 	"github.com/arifinhermawan/probi/internal/lib/errors"
@@ -13,7 +14,9 @@ import (
 )
 
 func (h *Handler) LogInHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"LogInHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
 
 	var req logInReq
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -65,7 +68,9 @@ func (h *Handler) LogInHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) LogOutHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"LogOutHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
 
 	userID := ctx.Value(auth.ContextKeyUserID).(int64)
 	err := h.auth.LogOut(ctx, userID)

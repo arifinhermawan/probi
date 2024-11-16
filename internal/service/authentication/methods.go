@@ -8,10 +8,14 @@ import (
 	"time"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 func (svc *Service) Authenticate(ctx context.Context, userID int64) (string, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"Authenticate")
+	defer span.End()
+
 	metadata := map[string]interface{}{
 		"user_id": userID,
 	}
@@ -66,6 +70,9 @@ func (svc *Service) GeneratePassword(password string) string {
 }
 
 func (svc *Service) InvalidateJWT(ctx context.Context, userID int64) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"InvalidateJWT")
+	defer span.End()
+
 	return svc.deleteJWTFromRedis(ctx, userID)
 }
 

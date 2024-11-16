@@ -54,5 +54,5 @@ func NewApplication(app *newrelic.Application) {
 
 	// handler
 	handler := server.NewHandler(uc)
-	router.HandleRequest(app, lib, handler)
+	router.HandleRequest(lib, handler)
 }

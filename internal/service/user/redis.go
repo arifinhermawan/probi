@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 )
 
 const (
@@ -14,6 +15,9 @@ const (
 )
 
 func (svc *Service) getUserDetailFromRedis(ctx context.Context, userID int64) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"getUserDetailFromRedis")
+	defer span.End()
+
 	key := buildRedisUserDetailKey(userID)
 	metadata := map[string]interface{}{
 		"user_id": userID,
@@ -40,6 +44,9 @@ func (svc *Service) getUserDetailFromRedis(ctx context.Context, userID int64) (U
 }
 
 func (svc *Service) setUserDetailToRedis(ctx context.Context, details User) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"setUserDetailToRedis")
+	defer span.End()
+
 	key := buildRedisUserDetailKey(details.ID)
 	ttl := time.Second * time.Duration(svc.lib.GetConfig().TTL.UserDetail)
 

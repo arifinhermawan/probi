@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 )
 
 const (
@@ -14,6 +15,9 @@ const (
 )
 
 func (svc *Service) deleteJWTFromRedis(ctx context.Context, userID int64) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"deleteJWTFromRedis")
+	defer span.End()
+
 	key := buildRedisJWTKey(userID)
 	err := svc.redis.Del(ctx, key)
 	if err != nil {
@@ -27,6 +31,9 @@ func (svc *Service) deleteJWTFromRedis(ctx context.Context, userID int64) error 
 }
 
 func (svc *Service) getJWTFromRedis(ctx context.Context, userID int64) (string, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"getJWTFromRedis")
+	defer span.End()
+
 	key := buildRedisJWTKey(userID)
 
 	metadata := map[string]interface{}{
@@ -54,6 +61,9 @@ func (svc *Service) getJWTFromRedis(ctx context.Context, userID int64) (string, 
 }
 
 func (svc *Service) setJWTToRedis(ctx context.Context, userID int64, jwt string) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"setJWTToRedis")
+	defer span.End()
+
 	key := buildRedisJWTKey(userID)
 	ttl := time.Second * time.Duration(svc.lib.GetConfig().TTL.JWT)
 

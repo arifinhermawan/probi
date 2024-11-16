@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/arifinhermawan/probi/internal/handler"
 	"github.com/arifinhermawan/probi/internal/lib/auth"
 	"github.com/arifinhermawan/probi/internal/lib/errors"
@@ -18,7 +19,9 @@ import (
 )
 
 func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"CreateUserHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
 
 	var req createUserReq
 	err := json.NewDecoder(r.Body).Decode(&req)
@@ -49,7 +52,9 @@ func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"GetUserDetailsHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
 
 	vars := mux.Vars(r)
 	userIDstr := vars["user_id"]
@@ -82,7 +87,9 @@ func (h *Handler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *Handler) UpdateUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"UpdateUserDetailsHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
 
 	var req updateUserDetailsReq
 	err := json.NewDecoder(r.Body).Decode(&req)

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/arifinhermawan/probi/internal/app"
 	"github.com/arifinhermawan/probi/internal/app/utils"
 	internalContext "github.com/arifinhermawan/probi/internal/lib/context"
@@ -22,6 +23,7 @@ func main() {
 	// clean up log file so it doesn't
 	// get bloated
 	cleanUp()
+	tracer.InitTracer(nrApp)
 	log.Init(filePath)
 	app.NewApplication(nrApp)
 }

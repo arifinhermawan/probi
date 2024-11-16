@@ -10,7 +10,7 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
-func HandleRequest(app *newrelic.Application, lib *lib.Lib, handlers *server.Handlers) {
+func HandleRequest(lib *lib.Lib, handlers *server.Handlers) {
 	router := mux.NewRouter().StrictSlash(true)
 
 	handleGetRequest(lib, handlers, router)
@@ -18,7 +18,7 @@ func HandleRequest(app *newrelic.Application, lib *lib.Lib, handlers *server.Han
 	handlePostRequest(lib, handlers, router)
 
 	log.Println("SERVING AT PORT :8080")
-	log.Fatal(http.ListenAndServe(":8080", routeMiddleware(app, router)))
+	log.Fatal(http.ListenAndServe(newrelic.WrapListen(":8080"), routeMiddleware(router)))
 }
 
 func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {

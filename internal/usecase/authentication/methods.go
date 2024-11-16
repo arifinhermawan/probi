@@ -4,10 +4,14 @@ import (
 	"context"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/arifinhermawan/probi/internal/lib/errors"
 )
 
 func (uc *UseCase) LogIn(ctx context.Context, req LogInReq) (int64, string, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"LogIn")
+	defer span.End()
+
 	metadata := map[string]interface{}{
 		"email":    req.Email,
 		"username": req.Username,
@@ -33,10 +37,16 @@ func (uc *UseCase) LogIn(ctx context.Context, req LogInReq) (int64, string, erro
 }
 
 func (uc *UseCase) LogOut(ctx context.Context, userID int64) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"LogOut")
+	defer span.End()
+
 	return uc.auth.InvalidateJWT(ctx, userID)
 }
 
 func (uc *UseCase) getUser(ctx context.Context, email string, username string) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"getUser")
+	defer span.End()
+
 	var user User
 
 	metadata := map[string]interface{}{

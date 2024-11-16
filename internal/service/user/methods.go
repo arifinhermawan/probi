@@ -4,10 +4,14 @@ import (
 	"context"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 	"github.com/arifinhermawan/probi/internal/repository/pgsql/user"
 )
 
 func (svc *Service) CreateUser(ctx context.Context, req CreateUserReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"CreateUser")
+	defer span.End()
+
 	timeNow := svc.lib.GetTimeGMT7()
 
 	err := svc.db.CreateUserInDB(ctx, user.CreateUserReq{
@@ -31,6 +35,9 @@ func (svc *Service) CreateUser(ctx context.Context, req CreateUserReq) error {
 }
 
 func (svc *Service) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetUserByEmail")
+	defer span.End()
+
 	user, err := svc.db.GetUserByEmailFromDB(ctx, email)
 	if err != nil {
 		log.Error(ctx, map[string]interface{}{
@@ -44,6 +51,9 @@ func (svc *Service) GetUserByEmail(ctx context.Context, email string) (User, err
 }
 
 func (svc *Service) GetUserByID(ctx context.Context, userID int64) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetUserByID")
+	defer span.End()
+
 	metadata := map[string]interface{}{
 		"user_id": userID,
 	}
@@ -81,6 +91,9 @@ func (svc *Service) GetUserByID(ctx context.Context, userID int64) (User, error)
 }
 
 func (svc *Service) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetUserByUsername")
+	defer span.End()
+
 	user, err := svc.db.GetUserByUsernameFromDB(ctx, username)
 	if err != nil {
 		log.Error(ctx, map[string]interface{}{
@@ -94,6 +107,9 @@ func (svc *Service) GetUserByUsername(ctx context.Context, username string) (Use
 }
 
 func (svc *Service) UpdateUserDetails(ctx context.Context, req UpdateUserDetailsReq) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"UpdateUserDetails")
+	defer span.End()
+
 	metadata := map[string]interface{}{
 		"user_id": req.UserID,
 	}

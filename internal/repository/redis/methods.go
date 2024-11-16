@@ -6,9 +6,13 @@ import (
 	"time"
 
 	"github.com/arifinhermawan/blib/log"
+	"github.com/arifinhermawan/blib/tracer"
 )
 
 func (repo *RedisRepo) Del(ctx context.Context, key string) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Redis+"Del")
+	defer span.End()
+
 	redisInt := repo.redis.Del(ctx, key)
 	_, err := redisInt.Result()
 	if err != nil {
@@ -24,6 +28,9 @@ func (repo *RedisRepo) Del(ctx context.Context, key string) error {
 }
 
 func (repo *RedisRepo) Get(ctx context.Context, key string) (string, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Redis+"Get")
+	defer span.End()
+
 	meta := map[string]interface{}{
 		"key": key,
 	}
@@ -49,6 +56,9 @@ func (repo *RedisRepo) Get(ctx context.Context, key string) (string, error) {
 }
 
 func (repo *RedisRepo) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Redis+"Set")
+	defer span.End()
+
 	meta := map[string]interface{}{
 		"key":        key,
 		"expiration": expiration,
