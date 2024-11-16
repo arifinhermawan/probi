@@ -20,7 +20,7 @@ func (repo *RedisRepo) Del(ctx context.Context, key string) error {
 			"key": key,
 		}
 
-		log.Error(ctx, meta, err, "[Del] redisInt.Result() got error")
+		log.Warn(ctx, meta, err, "[Del] redisInt.Result() got error")
 		return err
 	}
 
@@ -38,7 +38,7 @@ func (repo *RedisRepo) Get(ctx context.Context, key string) (string, error) {
 	redisInt := repo.redis.Exists(ctx, key)
 	isExist, err := redisInt.Result()
 	if err != nil {
-		log.Error(ctx, meta, err, "[Get] repo.redis.Exists() got error")
+		log.Warn(ctx, meta, err, "[Get] repo.redis.Exists() got error")
 		return "", err
 	}
 
@@ -48,7 +48,7 @@ func (repo *RedisRepo) Get(ctx context.Context, key string) (string, error) {
 
 	result, err := repo.redis.Get(ctx, key).Result()
 	if err != nil {
-		log.Error(ctx, meta, err, "[Get] repo.redis.Get().Result() got error")
+		log.Warn(ctx, meta, err, "[Get] repo.redis.Get().Result() got error")
 		return "", err
 	}
 
@@ -66,14 +66,14 @@ func (repo *RedisRepo) Set(ctx context.Context, key string, value interface{}, e
 
 	bytes, err := json.Marshal(value)
 	if err != nil {
-		log.Error(ctx, meta, err, "[Set] json.Marshal() got error")
+		log.Warn(ctx, meta, err, "[Set] json.Marshal() got error")
 		return err
 	}
 
 	redisStatus := repo.redis.Set(ctx, key, bytes, expiration)
 	_, err = redisStatus.Result()
 	if err != nil {
-		log.Error(ctx, meta, err, "[Set] repo.redis.Set() got error")
+		log.Warn(ctx, meta, err, "[Set] repo.redis.Set() got error")
 		return err
 	}
 

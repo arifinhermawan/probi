@@ -49,6 +49,7 @@ type TimeoutConfig struct {
 }
 
 type TTLConfig struct {
+	FiveMinutes    int `yaml:"five_minutes"`
 	FifteenMinutes int `yaml:"fifteen_minutes"`
 	OneDay         int `yaml:"one_day"`
 }

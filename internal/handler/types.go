@@ -1,5 +1,9 @@
 package handler
 
+const (
+	SuccessMessage = "success!"
+)
+
 type defaultResponse struct {
 	Code     int         `json:"code"`
 	Message  string      `json:"message"`

@@ -48,7 +48,7 @@ func (h *Handler) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	handler.SendJSONResponse(w, http.StatusCreated, nil, "success!", nil)
+	handler.SendJSONResponse(w, http.StatusCreated, nil, handler.SuccessMessage, nil)
 }
 
 func (h *Handler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +83,7 @@ func (h *Handler) GetUserDetailsHandler(w http.ResponseWriter, r *http.Request) 
 		DisplayName: res.DisplayName,
 	}
 
-	handler.SendJSONResponse(w, http.StatusOK, user, "success!", nil)
+	handler.SendJSONResponse(w, http.StatusOK, user, handler.SuccessMessage, nil)
 }
 
 func (h *Handler) UpdateUserDetailsHandler(w http.ResponseWriter, r *http.Request) {
@@ -120,5 +120,5 @@ func (h *Handler) UpdateUserDetailsHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	handler.SendJSONResponse(w, http.StatusNoContent, nil, "success!", nil)
+	handler.SendJSONResponse(w, http.StatusNoContent, nil, handler.SuccessMessage, nil)
 }

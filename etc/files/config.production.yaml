@@ -1,4 +1,5 @@
 ttl:
+  five_minutes: 300
   fifteen_minutes: 900
   one_day: 86400
 

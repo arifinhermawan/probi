@@ -74,5 +74,26 @@ func (h *Handler) CreateReminderHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	handler.SendJSONResponse(w, http.StatusCreated, nil, "success!", nil)
+	handler.SendJSONResponse(w, http.StatusCreated, nil, handler.SuccessMessage, nil)
+}
+
+func (h *Handler) GetUserActiveReminderHandler(w http.ResponseWriter, r *http.Request) {
+	ctx, txn := tracer.StartHTTPTransaction(r.Context(), tracer.Handler+"GetUserActiveReminderHandler", r)
+	w = txn.SetWebResponse(w)
+	defer txn.End()
+
+	userID := ctx.Value(auth.ContextKeyUserID).(int64)
+	res, err := h.reminder.GetUserActiveReminder(ctx, userID)
+	if err != nil {
+		log.Error(ctx, nil, err, "[GetUserActiveReminderHandler] h.reminder.GetUserActiveReminder() got error")
+		handler.SendJSONResponse(w, http.StatusInternalServerError, nil, "failed to fetch reminder", err)
+		return
+	}
+
+	reminders := make([]Reminder, len(res))
+	for idx, reminder := range res {
+		reminders[idx] = Reminder(reminder)
+	}
+
+	handler.SendJSONResponse(w, http.StatusOK, reminders, handler.SuccessMessage, nil)
 }

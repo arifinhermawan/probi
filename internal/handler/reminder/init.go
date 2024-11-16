@@ -8,6 +8,7 @@ import (
 
 type reminderUseCaseProvider interface {
 	CreateReminder(ctx context.Context, req reminder.CreateReminderReq) error
+	GetUserActiveReminder(ctx context.Context, userID int64) ([]reminder.Reminder, error)
 }
 
 type Handler struct {

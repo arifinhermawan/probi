@@ -23,10 +23,15 @@ func HandleRequest(ctx context.Context, lib *lib.Lib, handlers *server.Handlers)
 }
 
 func handleGetRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
+	// Reminder endpoints
+	router.HandleFunc("/reminder", lib.AuthMiddleware(handlers.Reminder.GetUserActiveReminderHandler)).Methods("GET")
+
+	// User endpoints
 	router.HandleFunc("/user/{user_id}", lib.AuthMiddleware(handlers.User.GetUserDetailsHandler)).Methods("GET")
 }
 
 func handlePutRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Router) {
+	// User endpoints
 	router.HandleFunc("/user", lib.AuthMiddleware(handlers.User.UpdateUserDetailsHandler)).Methods("PUT")
 }
 
@@ -35,7 +40,7 @@ func handlePostRequest(lib *lib.Lib, handlers *server.Handlers, router *mux.Rout
 	router.HandleFunc("/auth/login", handlers.Auth.LogInHandler).Methods("POST")
 	router.HandleFunc("/auth/logout", lib.AuthMiddleware(handlers.Auth.LogOutHandler)).Methods("POST")
 
-	// reminder endpoints
+	// Reminder endpoints
 	router.HandleFunc("/reminder", lib.AuthMiddleware(handlers.Reminder.CreateReminderHandler)).Methods("POST")
 
 	// User endpoints

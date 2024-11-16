@@ -26,4 +26,19 @@ var (
 			:updated_at
 		)
 	`
+
+	queryGetActiveReminderByUserIDFromDB = `
+		SELECT 
+			id,
+			title,
+			frequency,
+			interval,
+			due_date
+		FROM 
+			reminder
+		WHERE
+			user_id = $1
+		AND
+			deleted_at IS NULL
+	`
 )

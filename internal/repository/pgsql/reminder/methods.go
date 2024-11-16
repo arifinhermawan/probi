@@ -2,6 +2,7 @@ package reminder
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/arifinhermawan/blib/log"
@@ -49,4 +50,24 @@ func (r *Repository) CreateReminderInDB(ctx context.Context, req CreateReminderR
 	}
 
 	return nil
+}
+
+func (r *Repository) GetActiveReminderByUserIDFromDB(ctx context.Context, userID int64) ([]Reminder, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetActiveReminderByUserIDFromDB")
+	defer span.End()
+
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
+	defer cancel()
+
+	var reminders []Reminder
+	err := r.db.SelectContext(ctxTimeout, &reminders, queryGetActiveReminderByUserIDFromDB, userID)
+	if err != nil && err != sql.ErrNoRows {
+		log.Error(ctx, map[string]interface{}{
+			"user_id": userID,
+		}, err, "[GetActiveReminderByUserIDFromDB] r.db.SelectContext() got error")
+
+		return nil, err
+	}
+
+	return reminders, nil
 }

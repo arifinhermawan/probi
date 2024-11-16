@@ -49,3 +49,41 @@ func (svc *Service) CreateReminder(ctx context.Context, req CreateReminderReq) e
 
 	return nil
 }
+
+func (svc *Service) GetUserActiveReminder(ctx context.Context, userID int64) ([]Reminder, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetUserActiveReminder")
+	defer span.End()
+
+	metadata := map[string]interface{}{
+		"user_id": userID,
+	}
+
+	cached, err := svc.getReminderListFromRedis(ctx, userID)
+	if err != nil {
+		log.Warn(ctx, metadata, err, "[GetUserActiveReminder] svc.getReminderListFromRedis() got error")
+	}
+
+	if len(cached) != 0 {
+		return cached, nil
+	}
+
+	res, err := svc.db.GetActiveReminderByUserIDFromDB(ctx, userID)
+	if err != nil {
+		log.Error(ctx, metadata, err, "[GetUserActiveReminder] svc.db.GetActiveReminderByUserIDFromDB() got error")
+		return nil, err
+	}
+
+	reminders := make([]Reminder, len(res))
+	for idx, reminder := range res {
+		reminders[idx] = Reminder(reminder)
+	}
+
+	go func() {
+		err := svc.setReminderListToRedis(ctx, userID, reminders)
+		if err != nil {
+			log.Warn(ctx, metadata, err, "[GetUserActiveReminder] svc.setReminderListToRedis() got error")
+		}
+	}()
+
+	return reminders, nil
+}

@@ -2,7 +2,6 @@ package reminder
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
@@ -16,12 +15,14 @@ type libProvider interface {
 }
 
 type dbProvider interface {
-	BeginTX(ctx context.Context, options *sql.TxOptions) (*sql.Tx, error)
 	CreateReminderInDB(ctx context.Context, req reminder.CreateReminderReq) error
+	GetActiveReminderByUserIDFromDB(ctx context.Context, userID int64) ([]reminder.Reminder, error)
 }
 
 type redisProvider interface {
 	Del(ctx context.Context, key string) error
+	Get(ctx context.Context, key string) (string, error)
+	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error
 }
 
 type Service struct {
