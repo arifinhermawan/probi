@@ -6,8 +6,8 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/blib/tracer"
-	"github.com/arifinhermawan/probi/internal/app"
-	"github.com/arifinhermawan/probi/internal/app/utils"
+	app "github.com/arifinhermawan/probi/internal/app/http"
+	"github.com/arifinhermawan/probi/internal/app/http/utils"
 	internalContext "github.com/arifinhermawan/probi/internal/lib/context"
 )
 
@@ -24,12 +24,10 @@ func main() {
 		log.Fatal(ctx, nil, err, "Failed to init new relic")
 	}
 
-	// clean up log file so it doesn't
-	// get bloated
 	cleanUp(ctx)
 	tracer.InitTracer(nrApp)
 	log.Init(filePath)
-	app.NewApplication(ctx, nrApp)
+	app.NewHTTPApplication(ctx, nrApp)
 }
 
 func cleanUp(ctx context.Context) {

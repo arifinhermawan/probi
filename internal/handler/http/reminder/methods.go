@@ -8,7 +8,7 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/blib/tracer"
-	"github.com/arifinhermawan/probi/internal/handler"
+	handler "github.com/arifinhermawan/probi/internal/handler/http"
 	"github.com/arifinhermawan/probi/internal/lib/auth"
 	internalTime "github.com/arifinhermawan/probi/internal/lib/time"
 	"github.com/arifinhermawan/probi/internal/usecase/reminder"

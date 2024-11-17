@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/arifinhermawan/probi/internal/app/server"
+	"github.com/arifinhermawan/probi/internal/app/http/server"
 	"github.com/arifinhermawan/probi/internal/lib"
 	"github.com/gorilla/mux"
 	"github.com/newrelic/go-agent/v3/newrelic"

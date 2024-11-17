@@ -20,11 +20,11 @@ redis:
 	@echo "Redis is running."
 	@echo "============================"
 
-run: postgres redis
-	@if [ "$$ENV" = "production" ]; then \
-		fluent-bit -c fluent-bit.conf; \
-	fi
-	@go run cmd/main.go
+run-http: postgres redis
+	@go run cmd/http/main.go
+
+fluent:
+	fluent-bit -c fluent-bit.conf
 
 clean:
 	@docker stop probi-postgres probi-redis || true

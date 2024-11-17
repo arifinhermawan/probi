@@ -1,9 +1,9 @@
 package server
 
 import (
-	"github.com/arifinhermawan/probi/internal/handler/authentication"
-	"github.com/arifinhermawan/probi/internal/handler/reminder"
-	"github.com/arifinhermawan/probi/internal/handler/user"
+	"github.com/arifinhermawan/probi/internal/handler/http/authentication"
+	"github.com/arifinhermawan/probi/internal/handler/http/reminder"
+	"github.com/arifinhermawan/probi/internal/handler/http/user"
 )
 
 type Handlers struct {

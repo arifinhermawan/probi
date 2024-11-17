@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/arifinhermawan/blib/log"
-	"github.com/arifinhermawan/probi/internal/app/router"
-	"github.com/arifinhermawan/probi/internal/app/server"
-	"github.com/arifinhermawan/probi/internal/app/utils"
+	"github.com/arifinhermawan/probi/internal/app/http/router"
+	"github.com/arifinhermawan/probi/internal/app/http/server"
+	"github.com/arifinhermawan/probi/internal/app/http/utils"
 	"github.com/arifinhermawan/probi/internal/lib"
 	"github.com/arifinhermawan/probi/internal/lib/auth"
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
@@ -15,7 +15,7 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
-func NewApplication(ctx context.Context, app *newrelic.Application) {
+func NewHTTPApplication(ctx context.Context, app *newrelic.Application) {
 	cfg := configuration.New()
 	auth := auth.NewAuth(cfg)
 	time := time.New()
