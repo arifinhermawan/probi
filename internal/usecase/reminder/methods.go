@@ -47,6 +47,21 @@ func (uc *UseCase) GetUserActiveReminder(ctx context.Context, userID int64) ([]R
 	return reminders, nil
 }
 
+func (uc *UseCase) ProcessDueReminder(ctx context.Context) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"ProcessDueReminder")
+	defer span.End()
+
+	_, err := uc.reminder.GetDueReminderIDs(ctx)
+	if err != nil {
+		log.Error(ctx, nil, err, "[ProcessDueReminder] uc.reminder.GetDueReminderIDs() got error")
+		return err
+	}
+
+	// TODO: add publish message
+
+	return nil
+}
+
 func (uc *UseCase) UpdateReminder(ctx context.Context, req UpdateReminderReq) error {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"UpdateReminder")
 	defer span.End()

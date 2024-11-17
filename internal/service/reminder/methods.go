@@ -53,6 +53,18 @@ func (svc *Service) CreateReminder(ctx context.Context, req CreateReminderReq) e
 	return nil
 }
 
+func (svc *Service) GetDueReminderIDs(ctx context.Context) ([]int64, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetDueReminderIDs")
+	defer span.End()
+
+	res, err := svc.db.GetDueReminderIDsFromDB(ctx)
+	if err != nil {
+		log.Warn(ctx, nil, err, "[GetDueReminderIDs] svc.db.GetDueReminderIDsFromDB() got error")
+	}
+
+	return res, nil
+}
+
 func (svc *Service) GetUserActiveReminder(ctx context.Context, userID int64) ([]Reminder, error) {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetUserActiveReminder")
 	defer span.End()

@@ -20,8 +20,8 @@ redis:
 	@echo "Redis is running."
 	@echo "============================"
 
-run-http: postgres redis
-	@go run cmd/http/main.go
+run: postgres redis
+	@go run cmd/$(SERVICE)/main.go
 
 fluent:
 	fluent-bit -c fluent-bit.conf

@@ -3,12 +3,14 @@ package reminder
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
 )
 
 type libProvider interface {
 	GetConfig() *configuration.AppConfig
+	GetTimeGMT7() time.Time
 }
 
 type psqlProvider interface {

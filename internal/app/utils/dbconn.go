@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
@@ -8,11 +9,9 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
-	"github.com/arifinhermawan/probi/internal/lib/context"
 )
 
-func InitDBConn(cfg configuration.DatabaseConfig) (*sqlx.DB, error) {
-	ctx := context.DefaultContext()
+func InitDBConn(ctx context.Context, cfg configuration.DatabaseConfig) (*sqlx.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		cfg.Host, cfg.Port, cfg.Username, cfg.Password, cfg.DatabaseName)

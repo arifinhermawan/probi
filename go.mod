@@ -13,6 +13,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/newrelic/go-agent/v3 v3.35.1
 	github.com/redis/go-redis/v9 v9.5.3
+	github.com/robfig/cron/v3 v3.0.1
 	golang.org/x/text v0.15.0
 	gopkg.in/yaml.v2 v2.4.0
 )

@@ -8,8 +8,10 @@ type AppConfig struct {
 	Redis    RedisConfig    `json:"redis"`
 
 	// non-secret config
-	Timeout TimeoutConfig `yaml:"timeout"`
-	TTL     TTLConfig     `yaml:"ttl"`
+	Cron            CronConfig            `yaml:"cron"`
+	PublishReminder PublishReminderConfig `yaml:"publish_reminder"`
+	Timeout         TimeoutConfig         `yaml:"timeout"`
+	TTL             TTLConfig             `yaml:"ttl"`
 }
 
 /*
@@ -40,9 +42,17 @@ type RedisConfig struct {
 	Password string `json:"password"`
 }
 
-/**
+/*
+*
 // NON-SECRET CONFIGS
 */
+type CronConfig struct {
+	ProcessDueReminder string `yaml:"process_due_reminder"`
+}
+
+type PublishReminderConfig struct {
+	BatchSize int `yaml:"batch_size"`
+}
 
 type TimeoutConfig struct {
 	FiveSeconds int `yaml:"five_seconds"`

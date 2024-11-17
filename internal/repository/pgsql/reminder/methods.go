@@ -59,6 +59,24 @@ func (r *Repository) GetActiveReminderByUserIDFromDB(ctx context.Context, userID
 	return reminders, nil
 }
 
+func (r *Repository) GetDueReminderIDsFromDB(ctx context.Context) ([]int64, error) {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"GetDueReminderIDsFromDB")
+	defer span.End()
+
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.lib.GetConfig().Timeout.FiveSeconds)*time.Second)
+	defer cancel()
+
+	var reminderIDs []int64
+
+	err := r.db.SelectContext(ctxTimeout, &reminderIDs, queryGetDueReminderIDsFromDB, r.lib.GetTimeGMT7(), r.lib.GetConfig().PublishReminder.BatchSize)
+	if err != nil && err != sql.ErrNoRows {
+		log.Error(ctx, nil, err, "[GetDueReminderIDsFromDB] r.db.SelectContext() got error")
+		return nil, err
+	}
+
+	return reminderIDs, nil
+}
+
 func (r *Repository) UpdateReminderInDB(ctx context.Context, req UpdateReminderReq) error {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Database+"UpdateReminderInDB")
 	defer span.End()

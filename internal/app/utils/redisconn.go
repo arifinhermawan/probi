@@ -1,22 +1,20 @@
 package utils
 
 import (
+	"context"
 	"errors"
 
 	"github.com/redis/go-redis/v9"
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
-	"github.com/arifinhermawan/probi/internal/lib/context"
 )
 
 var (
 	errInitRedisConn = errors.New("failed to init redis connection")
 )
 
-func InitRedisConn(cfg configuration.RedisConfig) (*redis.Client, error) {
-	ctx := context.DefaultContext()
-
+func InitRedisConn(ctx context.Context, cfg configuration.RedisConfig) (*redis.Client, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Address,
 		Password: cfg.Password,

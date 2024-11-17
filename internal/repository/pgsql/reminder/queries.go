@@ -42,6 +42,21 @@ var (
 			deleted_at IS NULL
 	`
 
+	queryGetDueReminderIDsFromDB = `
+		SELECT 
+			id
+		FROM
+			reminder
+		WHERE
+			due_date <= $1
+		AND
+			is_sent = false
+		AND
+			deleted_at IS NULL
+		ORDER BY id ASC
+		LIMIT $2
+	`
+
 	queryUpdateReminderInDB = `
 		UPDATE
 			reminder

@@ -1,3 +1,9 @@
+cron:
+  process_due_reminder: "* 0-2 * * *"
+
+publish_reminder:
+  batch_size: 1000
+
 ttl:
   five_minutes: 300
   fifteen_minutes: 900
