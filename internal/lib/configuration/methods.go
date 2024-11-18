@@ -70,6 +70,7 @@ func addSecretConfig(config AppConfig, secretConfig AppConfig) AppConfig {
 	config.Hash = secretConfig.Hash
 	config.NewRelic = secretConfig.NewRelic
 	config.Redis = secretConfig.Redis
+	config.RMQ = secretConfig.RMQ
 
 	return config
 }

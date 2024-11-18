@@ -16,7 +16,7 @@ type UseCases struct {
 func NewUseCases(lib *lib.Lib, svc *Services) *UseCases {
 	return &UseCases{
 		Auth:     authentication.NewUseCase(svc.Auth, svc.User),
-		Reminder: reminder.NewUseCase(lib, svc.Reminder),
+		Reminder: reminder.NewUseCase(lib, svc.Reminder, svc.RMQ),
 		User:     user.NewUseCase(svc.Auth, svc.User),
 	}
 }

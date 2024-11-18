@@ -6,6 +6,7 @@ import (
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/blib/tracer"
 	"github.com/arifinhermawan/probi/internal/service/reminder"
+	"github.com/arifinhermawan/probi/internal/service/rmq"
 )
 
 func (uc *UseCase) CreateReminder(ctx context.Context, req CreateReminderReq) error {
@@ -51,13 +52,24 @@ func (uc *UseCase) ProcessDueReminder(ctx context.Context) error {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"ProcessDueReminder")
 	defer span.End()
 
-	_, err := uc.reminder.GetDueReminderIDs(ctx)
+	reminderIDs, err := uc.reminder.GetDueReminderIDs(ctx)
 	if err != nil {
 		log.Error(ctx, nil, err, "[ProcessDueReminder] uc.reminder.GetDueReminderIDs() got error")
 		return err
 	}
 
-	// TODO: add publish message
+	channel := uc.lib.GetConfig().Channel
+	err = uc.rmq.PublishMessage(ctx, rmq.PublishMessageReq{
+		Exchange:    channel.Queue.ReminderSendEmail.Exchange,
+		RouteKey:    channel.Queue.ReminderSendEmail.RoutingKey,
+		IsMandatory: true,
+		IsImmediate: false,
+		Message:     reminderIDs,
+	})
+	if err != nil {
+		log.Error(ctx, nil, err, "[ProcessDueReminder] uc.rmq.PublishMessage() got error")
+		return err
+	}
 
 	return nil
 }

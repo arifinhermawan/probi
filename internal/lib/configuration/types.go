@@ -6,8 +6,10 @@ type AppConfig struct {
 	Hash     HashKeyConfig  `json:"hash_key"`
 	NewRelic NewRelicConfig `json:"new_relic"`
 	Redis    RedisConfig    `json:"redis"`
+	RMQ      RMQConfig      `json:"rabbit_mq"`
 
 	// non-secret config
+	Channel         ChannelConfig         `yaml:"channel"`
 	Cron            CronConfig            `yaml:"cron"`
 	PublishReminder PublishReminderConfig `yaml:"publish_reminder"`
 	Timeout         TimeoutConfig         `yaml:"timeout"`
@@ -32,6 +34,13 @@ type HashKeyConfig struct {
 	JWT      string `json:"jwt"`
 }
 
+type RMQConfig struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+}
+
 type NewRelicConfig struct {
 	UserKey    string `json:"user_key"`
 	LicenseKey string `json:"license_key"`
@@ -46,8 +55,49 @@ type RedisConfig struct {
 *
 // NON-SECRET CONFIGS
 */
+
+type ChannelConfig struct {
+	Exchange Exchange `yaml:"exchange"`
+	Queue    Queue    `yaml:"queue"`
+}
+
 type CronConfig struct {
 	ProcessDueReminder string `yaml:"process_due_reminder"`
+}
+
+type Exchange struct {
+	Reminder ExchangeConfig `yaml:"reminder"`
+}
+
+type ExchangeConfig struct {
+	Name string `yaml:"name"`
+	Type string `yaml:"type"`
+}
+
+type Queue struct {
+	ReminderSendEmail QueueConfig `yaml:"reminder_send_email"`
+}
+
+type QueueConfig struct {
+	Name       string `yaml:"name"`
+	RoutingKey string `yaml:"routing_key"`
+	Exchange   string `yaml:"exchange"`
+	Consumer   string `yaml:"consumer"`
+}
+
+type ReminderConfig struct {
+	Exchange    string                    `yaml:"exchange"`
+	Queue       ReminderQueueConfig       `yaml:"queue"`
+	RoutingKeys ReminderRoutingKeysConfig `yaml:"routing_key"`
+	MaxRetry    int                       `yaml:"max_retry"`
+}
+
+type ReminderQueueConfig struct {
+	Email string `yaml:"email"`
+}
+
+type ReminderRoutingKeysConfig struct {
+	Email string `yaml:"email"`
 }
 
 type PublishReminderConfig struct {

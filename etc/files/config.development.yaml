@@ -1,5 +1,5 @@
 cron:
-  process_due_reminder: "* 0-2 * * *"
+  process_due_reminder: "* * * * *"
 
 publish_reminder:
   batch_size: 1000
@@ -11,3 +11,15 @@ ttl:
 
 timeout:
   five_seconds: 5
+
+channel:
+  exchange:
+    reminder:
+      name: "reminder.exchange"
+      type: "direct"
+  queue:
+    reminder_send_email:
+      exchange: "reminder.exchange"
+      name: "reminder.send.email"
+      routing_key: "reminder.email"
+      consumer: "consumer.reminder.send.email"

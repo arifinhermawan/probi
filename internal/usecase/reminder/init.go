@@ -6,6 +6,7 @@ import (
 
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
 	"github.com/arifinhermawan/probi/internal/service/reminder"
+	"github.com/arifinhermawan/probi/internal/service/rmq"
 )
 
 type libProvider interface {
@@ -20,14 +21,20 @@ type reminderServiceProvider interface {
 	UpdateReminder(ctx context.Context, req reminder.UpdateReminderReq) error
 }
 
+type rmqServiceProvider interface {
+	PublishMessage(ctx context.Context, req rmq.PublishMessageReq) error
+}
+
 type UseCase struct {
 	lib      libProvider
 	reminder reminderServiceProvider
+	rmq      rmqServiceProvider
 }
 
-func NewUseCase(lib libProvider, reminder reminderServiceProvider) *UseCase {
+func NewUseCase(lib libProvider, reminder reminderServiceProvider, rmq rmqServiceProvider) *UseCase {
 	return &UseCase{
 		lib:      lib,
 		reminder: reminder,
+		rmq:      rmq,
 	}
 }

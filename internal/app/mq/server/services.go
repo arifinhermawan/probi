@@ -9,8 +9,8 @@ import (
 )
 
 type Services struct {
-	Reminder *reminder.Service
 	RMQ      *rmq.Service
+	Reminder *reminder.Service
 }
 
 func NewService(lib *lib.Lib, db *PSQL, redis *redis.RedisRepo, rabbit *rabbitmq.RMQRepo) *Services {
