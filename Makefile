@@ -8,23 +8,33 @@ dep:
 	@echo "RUNNING GO MOD VENDOR..."
 	@go mod vendor
 
-postgres:
-	@echo "Starting Postgres docker container"
-	@docker start probi-postgres || (echo "Container probi-postgres not found. Run docker-compose up -d or create the container first." && exit 1)
-	@echo "Postgres is running."
-	@echo "============================"
+# Start Docker Compose services
+docker-compose-up:
+	@echo "Starting Docker containers using docker-compose"
+	@docker-compose up -d
 
-redis:
-	@echo "Starting Redis docker container"
-	@docker start probi-redis || (echo "Container probi-redis not found. Run docker-compose up -d or create the container first." && exit 1)
-	@echo "Redis is running."
-	@echo "============================"
+# Stop Docker Compose services
+docker-compose-down:
+	@echo "Stopping Docker containers using docker-compose"
+	@docker-compose down
 
-run: postgres redis
-	@go run cmd/$(SERVICE)/main.go
+# Run HTTP service
+run-http: docker-compose-up
+	@go run cmd/http/main.go
 
+# Run Cron service
+run-cron: docker-compose-up
+	@go run cmd/cron/main.go
+
+# Run NSQ service
+run-nsq: docker-compose-up
+	@go run cmd/nsq/main.go
+
+# Fluent Bit service
 fluent:
 	fluent-bit -c fluent-bit.conf
 
-clean:
+# Clean up - stop services if running
+clean: docker-compose-down
 	@docker stop probi-postgres probi-redis || true
+	@docker stop probi-nsq || true

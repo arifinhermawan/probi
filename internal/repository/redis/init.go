@@ -14,12 +14,12 @@ type redisProvider interface {
 	Set(ctx context.Context, key string, value interface{}, expiration time.Duration) *redis.StatusCmd
 }
 
-type RedisRepo struct {
+type Repository struct {
 	redis redisProvider
 }
 
-func NewRedisRepository(redis redisProvider) *RedisRepo {
-	return &RedisRepo{
+func NewRedisRepository(redis redisProvider) *Repository {
+	return &Repository{
 		redis: redis,
 	}
 }

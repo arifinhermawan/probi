@@ -5,9 +5,11 @@ type AppConfig struct {
 	Database DatabaseConfig `json:"database"`
 	Hash     HashKeyConfig  `json:"hash_key"`
 	NewRelic NewRelicConfig `json:"new_relic"`
+	NSQ      NSQConfig      `json:"nsq"`
 	Redis    RedisConfig    `json:"redis"`
 
 	// non-secret config
+	Channel         Channel               `yaml:"channel"`
 	Cron            CronConfig            `yaml:"cron"`
 	PublishReminder PublishReminderConfig `yaml:"publish_reminder"`
 	Timeout         TimeoutConfig         `yaml:"timeout"`
@@ -37,6 +39,11 @@ type NewRelicConfig struct {
 	LicenseKey string `json:"license_key"`
 }
 
+type NSQConfig struct {
+	NSQD    string   `json:"nsqd"`
+	Lookupd []string `json:"lookupd"`
+}
+
 type RedisConfig struct {
 	Address  string `json:"address"`
 	Password string `json:"password"`
@@ -46,6 +53,18 @@ type RedisConfig struct {
 *
 // NON-SECRET CONFIGS
 */
+
+type Channel struct {
+	Reminder ChannelConfig `yaml:"reminder"`
+}
+
+type ChannelConfig struct {
+	Topic       string `yaml:"topic"`
+	Channel     string `yaml:"channel"`
+	MaxAttempt  int    `yaml:"max_attempt"`
+	MaxInFlight int    `yaml:"max_in_flight"`
+}
+
 type CronConfig struct {
 	ProcessDueReminder string `yaml:"process_due_reminder"`
 }

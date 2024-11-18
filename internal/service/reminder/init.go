@@ -21,6 +21,10 @@ type dbProvider interface {
 	UpdateReminderInDB(ctx context.Context, req reminder.UpdateReminderReq) error
 }
 
+type nsqProvider interface {
+	PublishMessageToNSQ(ctx context.Context, topic string, message []byte) error
+}
+
 type redisProvider interface {
 	Del(ctx context.Context, key string) error
 	Get(ctx context.Context, key string) (string, error)
@@ -30,13 +34,15 @@ type redisProvider interface {
 type Service struct {
 	lib   libProvider
 	db    dbProvider
+	nsq   nsqProvider
 	redis redisProvider
 }
 
-func NewService(lib libProvider, db dbProvider, redis redisProvider) *Service {
+func NewService(lib libProvider, db dbProvider, nsq nsqProvider, redis redisProvider) *Service {
 	return &Service{
 		lib:   lib,
 		db:    db,
+		nsq:   nsq,
 		redis: redis,
 	}
 }

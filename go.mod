@@ -5,13 +5,14 @@ go 1.22.5
 toolchain go1.23.1
 
 require (
-	github.com/arifinhermawan/blib v1.0.12-0.20241116114230-7bff7ce3f53b
+	github.com/arifinhermawan/blib v1.0.13
 	github.com/go-playground/validator/v10 v10.22.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/gorilla/mux v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/lib/pq v1.10.9
 	github.com/newrelic/go-agent/v3 v3.35.1
+	github.com/nsqio/go-nsq v1.1.0
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/robfig/cron/v3 v3.0.1
 	golang.org/x/text v0.15.0
@@ -29,6 +30,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
+	github.com/golang/snappy v0.0.1 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect

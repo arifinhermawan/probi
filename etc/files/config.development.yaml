@@ -11,3 +11,10 @@ ttl:
 
 timeout:
   five_seconds: 5
+
+channel:
+  reminder:
+    topic: "email"
+    channel: "reminder"
+    max_attempt: 5
+    max_in_flight: 10

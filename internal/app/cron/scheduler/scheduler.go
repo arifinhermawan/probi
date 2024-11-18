@@ -15,6 +15,7 @@ import (
 func RegisterScheduler(ctx context.Context, schedule configuration.CronConfig, handlers *server.Handlers) {
 	c := cron.New()
 
+	// TODO: remove this
 	_, err := c.AddFunc("* * * * *", processDueReminder(ctx, handlers))
 	if err != nil {
 		log.Error(ctx, nil, err, "[RegisterScheduler] failed to add ProcessDueReminder")

@@ -1,11 +1,11 @@
-package app
+package nsq
 
 import (
 	"context"
 
 	"github.com/arifinhermawan/blib/log"
-	"github.com/arifinhermawan/probi/internal/app/http/router"
-	"github.com/arifinhermawan/probi/internal/app/http/server"
+	"github.com/arifinhermawan/probi/internal/app/nsq/router"
+	"github.com/arifinhermawan/probi/internal/app/nsq/server"
 	"github.com/arifinhermawan/probi/internal/app/utils"
 	"github.com/arifinhermawan/probi/internal/lib"
 	"github.com/arifinhermawan/probi/internal/lib/auth"
@@ -13,7 +13,7 @@ import (
 	"github.com/arifinhermawan/probi/internal/lib/time"
 )
 
-func NewHTTPApplication(ctx context.Context) {
+func NewNSQApplication(ctx context.Context) {
 	cfg := configuration.New()
 	auth := auth.NewAuth(cfg)
 	time := time.New()
@@ -26,29 +26,29 @@ func NewHTTPApplication(ctx context.Context) {
 
 	db, err := utils.InitDBConn(ctx, lib.GetConfig().Database)
 	if err != nil {
-		log.Fatal(ctx, nil, err, "[NewHTTPApplication] utils.InitDBConn() got error")
+		log.Fatal(ctx, nil, err, "[NewNSQApplication] utils.InitDBConn() got error")
 		return
 	}
-	log.Info(ctx, nil, nil, "[NewHTTPApplication] connected to database")
+	log.Info(ctx, nil, nil, "[NewNSQApplication] connected to database")
 
 	redis, err := utils.InitRedisConn(ctx, lib.GetConfig().Redis)
 	if err != nil {
-		log.Fatal(ctx, nil, err, "[NewHTTPApplication] utils.InitRedisConn() got error")
+		log.Fatal(ctx, nil, err, "[NewNSQApplication] utils.InitRedisConn() got error")
 		return
 	}
-	log.Info(ctx, nil, nil, "[NewHTTPApplication] connected to redis")
+	log.Info(ctx, nil, nil, "[NewNSQApplication] connected to redis")
 
 	publisher, err := utils.InitNSQProducer(ctx, lib.GetConfig().NSQ.NSQD)
 	if err != nil {
-		log.Fatal(ctx, nil, err, "[NewHTTPApplication] utils.InitNSQProducer() got error")
+		log.Fatal(ctx, nil, err, "[NewNSQApplication] utils.InitNSQProducer() got error")
 		return
 	}
-	log.Info(ctx, nil, nil, "[NewHTTPApplication] publisher initialized")
+	log.Info(ctx, nil, nil, "[NewNSQApplication] publisher initialized")
 
 	repo := server.NewRepository(lib, db, redis, publisher)
 	services := server.NewService(lib, repo)
 	usecases := server.NewUseCases(lib, services)
 	handlers := server.NewHandler(usecases)
-	router.HandleRequest(ctx, lib, handlers)
+	router.RegisterConsumer(ctx, handlers, lib.GetConfig())
 	utils.GracefulShutDownProducer(ctx, publisher)
 }

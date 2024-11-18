@@ -5,11 +5,10 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/blib/tracer"
-	"github.com/arifinhermawan/probi/internal/lib/constants"
 )
 
 func (h *Handler) ProcessDueReminder(ctx context.Context) {
-	ctx, txn := tracer.StartTransaction(ctx, tracer.Handler+"ProcessDueReminder", constants.ServiceNameCRON)
+	ctx, txn := tracer.StartTransaction(ctx, tracer.Handler+"ProcessDueReminder", tracer.CronTransaction)
 	defer txn.End()
 
 	metadata := map[string]interface{}{

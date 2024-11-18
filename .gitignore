@@ -15,3 +15,5 @@
 vendor/
 etc/credentials
 logs/
+.env
+*.sql

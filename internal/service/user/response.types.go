@@ -6,5 +6,4 @@ type User struct {
 	DisplayName string
 	Email       string
 	Password    string
-	Status      string
 }

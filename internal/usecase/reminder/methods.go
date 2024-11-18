@@ -51,13 +51,11 @@ func (uc *UseCase) ProcessDueReminder(ctx context.Context) error {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.UseCase+"ProcessDueReminder")
 	defer span.End()
 
-	_, err := uc.reminder.GetDueReminderIDs(ctx)
+	err := uc.reminder.ProcessDueReminder(ctx)
 	if err != nil {
-		log.Error(ctx, nil, err, "[ProcessDueReminder] uc.reminder.GetDueReminderIDs() got error")
+		log.Error(ctx, nil, err, "[ProcessDueReminder] uc.reminder.ProcessDueReminder() got error")
 		return err
 	}
-
-	// TODO: add publish message
 
 	return nil
 }

@@ -19,8 +19,7 @@ var (
 			username,
 			display_name,
 			email,
-			"password",
-			status
+			"password"
 		FROM
 			"user"
 		WHERE
@@ -33,8 +32,7 @@ var (
 			username,
 			display_name,
 			email,
-			"password",
-			status
+			"password"
 		FROM
 			"user"
 		WHERE
@@ -47,8 +45,7 @@ var (
 			username,
 			display_name,
 			email,
-			"password",
-			status
+			"password"
 		FROM
 			"user"
 		WHERE

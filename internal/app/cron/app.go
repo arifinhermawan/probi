@@ -11,11 +11,9 @@ import (
 	"github.com/arifinhermawan/probi/internal/lib/auth"
 	"github.com/arifinhermawan/probi/internal/lib/configuration"
 	"github.com/arifinhermawan/probi/internal/lib/time"
-	"github.com/arifinhermawan/probi/internal/repository/redis"
-	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
-func NewCRONApplication(ctx context.Context, app *newrelic.Application) {
+func NewCRONApplication(ctx context.Context) {
 	cfg := configuration.New()
 	auth := auth.NewAuth(cfg)
 	time := time.New()
@@ -31,17 +29,27 @@ func NewCRONApplication(ctx context.Context, app *newrelic.Application) {
 		log.Fatal(ctx, nil, err, "[NewCRONApplication] utils.InitDBConn() got error")
 		return
 	}
+	log.Info(ctx, nil, nil, "[NewCRONApplication] connected to database")
 
-	redisClient, err := utils.InitRedisConn(ctx, lib.GetConfig().Redis)
+	redis, err := utils.InitRedisConn(ctx, lib.GetConfig().Redis)
 	if err != nil {
 		log.Fatal(ctx, nil, err, "[NewCRONApplication] utils.InitRedisConn() got error")
 		return
 	}
+	log.Info(ctx, nil, nil, "[NewCRONApplication] connected to redis")
 
-	psql := server.NewPSQL(lib, db)
-	services := server.NewService(lib, psql, redis.NewRedisRepository(redisClient))
+	publisher, err := utils.InitNSQProducer(ctx, lib.GetConfig().NSQ.NSQD)
+	if err != nil {
+		log.Fatal(ctx, nil, err, "[NewCRONApplication] utils.InitNSQProducer() got error")
+		return
+	}
+	log.Info(ctx, nil, nil, "[NewCRONApplication] publisher initialized")
+
+	repo := server.NewRepository(lib, db, redis, publisher)
+	services := server.NewService(lib, repo)
 	usecases := server.NewUseCases(lib, services)
 	handlers := server.NewHandler(usecases)
 
 	scheduler.RegisterScheduler(ctx, lib.GetConfig().Cron, handlers)
+	utils.GracefulShutDownProducer(ctx, publisher)
 }

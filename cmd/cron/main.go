@@ -28,7 +28,7 @@ func main() {
 	cleanUp(ctx)
 	tracer.InitTracer(nrApp)
 	log.Init(filePath)
-	app.NewCRONApplication(ctx, nrApp)
+	app.NewCRONApplication(ctx)
 }
 
 func cleanUp(ctx context.Context) {

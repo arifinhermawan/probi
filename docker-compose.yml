@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: redis-server --port 6380 --requirepass ${REDIS_PASSWORD}
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    ports:
+      - "6380:6380"
+
+  nsqlookupd:
+    image: nsqio/nsq
+    container_name: nsqlookupd
+    command: /nsqlookupd
+    ports:
+      - "4160:4160"
+      - "4161:4161"
+
+  nsqd:
+    image: nsqio/nsq
+    container_name: nsqd
+    command: nsqd --lookupd-tcp-address=nsqlookupd:4160 --broadcast-address=host.docker.internal
+    ports:
+      - "4150:4150"
+      - "4151:4151"
+    depends_on:
+      - nsqlookupd
+
+  nsqadmin:
+    image: nsqio/nsq
+    container_name: nsqadmin
+    command: /nsqadmin --lookupd-http-address=nsqlookupd:4161
+    ports:
+      - "4171:4171"
+    depends_on:
+      - nsqlookupd
+
+volumes:
+  postgres_data:

@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/arifinhermawan/probi/internal/lib"
-	"github.com/arifinhermawan/probi/internal/repository/redis"
 	"github.com/arifinhermawan/probi/internal/service/authentication"
 	"github.com/arifinhermawan/probi/internal/service/reminder"
 	"github.com/arifinhermawan/probi/internal/service/user"
@@ -14,10 +13,10 @@ type Services struct {
 	User     *user.Service
 }
 
-func NewService(lib *lib.Lib, db *PSQL, redis *redis.RedisRepo) *Services {
+func NewService(lib *lib.Lib, repo *Repositories) *Services {
 	return &Services{
-		Auth:     authentication.NewService(lib, redis),
-		Reminder: reminder.NewService(lib, db.Reminder, redis),
-		User:     user.NewService(lib, db.User, redis),
+		Auth:     authentication.NewService(lib, repo.Redis),
+		Reminder: reminder.NewService(lib, repo.ReminderDB, repo.NSQ, repo.Redis),
+		User:     user.NewService(lib, repo.UserDB, repo.Redis),
 	}
 }

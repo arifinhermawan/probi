@@ -6,7 +6,7 @@ import (
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/blib/tracer"
-	app "github.com/arifinhermawan/probi/internal/app/http"
+	app "github.com/arifinhermawan/probi/internal/app/nsq"
 	"github.com/arifinhermawan/probi/internal/app/utils"
 	"github.com/arifinhermawan/probi/internal/lib/constants"
 	internalContext "github.com/arifinhermawan/probi/internal/lib/context"
@@ -18,7 +18,7 @@ const (
 
 func main() {
 	ctx := internalContext.DefaultContext()
-	ctx = context.WithValue(ctx, log.ContextKey("service_type"), constants.ServiceNameHTTP)
+	ctx = context.WithValue(ctx, log.ContextKey("service_type"), constants.ServiceNameMQ)
 
 	nrApp, err := utils.InitNewRelicConn()
 	if err != nil {
@@ -28,7 +28,7 @@ func main() {
 	cleanUp(ctx)
 	tracer.InitTracer(nrApp)
 	log.Init(filePath)
-	app.NewHTTPApplication(ctx)
+	app.NewNSQApplication(ctx)
 }
 
 func cleanUp(ctx context.Context) {

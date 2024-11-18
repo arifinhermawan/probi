@@ -9,7 +9,7 @@ import (
 	"github.com/arifinhermawan/blib/tracer"
 )
 
-func (repo *RedisRepo) Del(ctx context.Context, key string) error {
+func (repo *Repository) Del(ctx context.Context, key string) error {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Redis+"Del")
 	defer span.End()
 
@@ -27,7 +27,7 @@ func (repo *RedisRepo) Del(ctx context.Context, key string) error {
 	return nil
 }
 
-func (repo *RedisRepo) Get(ctx context.Context, key string) (string, error) {
+func (repo *Repository) Get(ctx context.Context, key string) (string, error) {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Redis+"Get")
 	defer span.End()
 
@@ -55,7 +55,7 @@ func (repo *RedisRepo) Get(ctx context.Context, key string) (string, error) {
 	return result, nil
 }
 
-func (repo *RedisRepo) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
+func (repo *Repository) Set(ctx context.Context, key string, value interface{}, expiration time.Duration) error {
 	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Redis+"Set")
 	defer span.End()
 

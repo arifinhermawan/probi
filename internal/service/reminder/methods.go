@@ -2,6 +2,7 @@ package reminder
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/arifinhermawan/blib/log"
 	"github.com/arifinhermawan/blib/tracer"
@@ -53,16 +54,29 @@ func (svc *Service) CreateReminder(ctx context.Context, req CreateReminderReq) e
 	return nil
 }
 
-func (svc *Service) GetDueReminderIDs(ctx context.Context) ([]int64, error) {
-	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"GetDueReminderIDs")
+func (svc *Service) ProcessDueReminder(ctx context.Context) error {
+	ctx, span := tracer.StartSpanFromContext(ctx, tracer.Service+"ProcessDueReminder")
 	defer span.End()
 
 	res, err := svc.db.GetDueReminderIDsFromDB(ctx)
 	if err != nil {
-		log.Warn(ctx, nil, err, "[GetDueReminderIDs] svc.db.GetDueReminderIDsFromDB() got error")
+		log.Error(ctx, nil, err, "[ProcessDueReminder] svc.db.GetDueReminderIDsFromDB() got error")
+		return err
 	}
 
-	return res, nil
+	bytes, err := json.Marshal(res)
+	if err != nil {
+		log.Error(ctx, nil, err, "[ProcessDueReminder] json.Marshal() got error")
+		return err
+	}
+
+	err = svc.nsq.PublishMessageToNSQ(ctx, svc.lib.GetConfig().Channel.Reminder.Topic, bytes)
+	if err != nil {
+		log.Error(ctx, nil, err, "[ProcessDueReminder] svc.nsq.PublishMessageToNSQ() got error")
+		return err
+	}
+
+	return nil
 }
 
 func (svc *Service) GetUserActiveReminder(ctx context.Context, userID int64) ([]Reminder, error) {
